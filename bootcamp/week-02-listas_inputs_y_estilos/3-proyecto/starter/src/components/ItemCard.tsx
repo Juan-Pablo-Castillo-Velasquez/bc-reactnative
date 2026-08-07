@@ -9,8 +9,7 @@ interface ItemCardProps {
 }
 
 /**
- * Tarjeta reutilizable para mostrar un elemento del dominio.
- * Personaliza el contenido según los campos de tu interfaz Item.
+ * Tarjeta reutilizable para mostrar un programa de radio.
  */
 export function ItemCard({ item, onPress }: ItemCardProps): React.JSX.Element {
   return (
@@ -23,30 +22,13 @@ export function ItemCard({ item, onPress }: ItemCardProps): React.JSX.Element {
       accessibilityRole="button"
       accessibilityLabel={item.name}
     >
-      {/* Nombre principal del elemento */}
       <Text style={styles.itemName}>{item.name}</Text>
+      <Text style={styles.fieldText}>Conducido por {item.host}</Text>
+      <Text style={styles.fieldText}>{item.schedule}</Text>
 
-      {/* TODO: Mostrar los campos adicionales de tu dominio */}
-      {/* Ejemplos:
-        Biblioteca:
-          <Text style={styles.fieldText}>{item.author}</Text>
-          <Text style={styles.fieldText}>{item.available ? 'Disponible' : 'Prestado'}</Text>
-
-        Farmacia:
-          <Text style={styles.fieldText}>${item.price}</Text>
-          <Text style={styles.fieldText}>Stock: {item.stock}</Text>
-
-        Gimnasio:
-          <Text style={styles.fieldText}>Plan: {item.plan}</Text>
-          <Text style={styles.fieldText}>Vence: {item.expiresAt}</Text>
-      */}
-
-      {/* TODO: Si tu dominio tiene un badge de estado/categoría, agrégalo aquí */}
-      {/* Ejemplo:
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{item.category}</Text>
-        </View>
-      */}
+      <View style={styles.badge}>
+        <Text style={styles.badgeText}>{item.sponsor}</Text>
+      </View>
     </Pressable>
   );
 }
@@ -87,6 +69,5 @@ const styles = StyleSheet.create({
     fontSize: TYPOGRAPHY.size.xs,
     fontWeight: TYPOGRAPHY.weight.semibold,
     color: COLORS.accent,
-    textTransform: 'capitalize',
   },
 });

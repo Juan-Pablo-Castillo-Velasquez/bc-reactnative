@@ -2,67 +2,78 @@ import { Item } from '../types';
 
 // ============================================
 // MOCK DATA — Semana 02
-// Reemplaza estos items genéricos con datos
-// reales de tu dominio asignado.
-//
-// REQUISITO: mínimo 10 items
+// Dominio: Radio comunitaria
 // ============================================
-
-// TODO: Renombra ITEMS a algo descriptivo de tu dominio
-//       Ejemplo: BOOKS, MEDICINES, MEMBERS, DISHES...
-// TODO: Actualiza el tipo Item con los campos de tu dominio
-// TODO: Rellena con datos reales y variados de tu dominio
 
 export const ITEMS: Item[] = [
   {
     id: '1',
-    name: 'Elemento 01',
-    // TODO: agregar campos de tu dominio
+    name: 'Voces del Barrio',
+    host: 'Marta Gómez',
+    schedule: 'Lunes a viernes, 7:00 - 9:00 am',
+    sponsor: 'Panadería La Espiga',
   },
   {
     id: '2',
-    name: 'Elemento 02',
-    // TODO: agregar campos de tu dominio
+    name: 'Ritmo Local',
+    host: 'Andrés Pardo',
+    schedule: 'Martes y jueves, 3:00 - 5:00 pm',
+    sponsor: 'Ferretería El Tornillo',
   },
   {
     id: '3',
-    name: 'Elemento 03',
-    // TODO: agregar campos de tu dominio
+    name: 'Charla Comunitaria',
+    host: 'Lucía Fernández',
+    schedule: 'Miércoles, 6:00 - 7:30 pm',
+    sponsor: 'Droguería San José',
   },
   {
     id: '4',
-    name: 'Elemento 04',
-    // TODO: agregar campos de tu dominio
+    name: 'Noches de Vinilo',
+    host: 'Camilo Restrepo',
+    schedule: 'Sábados, 8:00 - 10:00 pm',
+    sponsor: 'Café La Esquina',
   },
   {
     id: '5',
-    name: 'Elemento 05',
-    // TODO: agregar campos de tu dominio
+    name: 'Deporte al Día',
+    host: 'Julián Cárdenas',
+    schedule: 'Lunes, miércoles y viernes, 6:00 - 7:00 pm',
+    sponsor: 'Gimnasio Fuerza Total',
   },
   {
     id: '6',
-    name: 'Elemento 06',
-    // TODO: agregar campos de tu dominio
+    name: 'El Consultorio',
+    host: 'Dra. Paola Niño',
+    schedule: 'Martes, 10:00 - 11:00 am',
+    sponsor: 'Droguería San José',
   },
   {
     id: '7',
-    name: 'Elemento 07',
-    // TODO: agregar campos de tu dominio
+    name: 'Cocina de mi Tierra',
+    host: 'Rosa Elvira Peña',
+    schedule: 'Domingos, 12:00 - 1:00 pm',
+    sponsor: 'Mercado Campesino El Surco',
   },
   {
     id: '8',
-    name: 'Elemento 08',
-    // TODO: agregar campos de tu dominio
+    name: 'Historias del Barrio Viejo',
+    host: 'Don Ernesto Salazar',
+    schedule: 'Jueves, 5:00 - 6:00 pm',
+    sponsor: 'Funeraria La Paz',
   },
   {
     id: '9',
-    name: 'Elemento 09',
-    // TODO: agregar campos de tu dominio
+    name: 'Jóvenes en Acción',
+    host: 'Valentina Ríos',
+    schedule: 'Viernes, 4:00 - 5:00 pm',
+    sponsor: 'Papelería El Estudiante',
   },
   {
     id: '10',
-    name: 'Elemento 10',
-    // TODO: agregar campos de tu dominio
+    name: 'Fin de Semana Musical',
+    host: 'Esteban Molano',
+    schedule: 'Sábados y domingos, 2:00 - 4:00 pm',
+    sponsor: 'Tienda de Discos Vinyl City',
   },
-  // TODO: puedes agregar más items para hacer la demo más rica
 ];
