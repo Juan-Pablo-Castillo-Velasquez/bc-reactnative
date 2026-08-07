@@ -1,43 +1,42 @@
 // ============================================================
 // MOCK DATA — src/data/mockData.ts
 // ============================================================
-// Datos de ejemplo para tu dominio asignado.
-// Reemplaza estos datos con información coherente a tu dominio.
+// Datos de ejemplo del dominio: Radio comunitaria
 // ============================================================
 
-import { Item } from '../types';
+import { Program } from '../types';
 
-// TODO: Reemplaza los valores por datos reales de tu dominio
-// Usa imágenes representativas — puedes usar URLs de picsum.photos
-// o incluir imágenes locales en assets/
-
-export const MOCK_ITEMS: Item[] = [
+export const MOCK_PROGRAMS: Program[] = [
   {
     id: '1',
-    name: 'Nombre del elemento 1',
-    subtitle: 'Subtítulo o descripción corta',
-    imageUri: 'https://picsum.photos/seed/item1/300/200',
-    // TODO: Agrega las propiedades específicas de tu dominio
+    name: 'Voces del Barrio',
+    imageUri: 'https://picsum.photos/seed/radio1/300/200',
+    host: 'Marta Gómez',
+    schedule: 'Lunes a viernes, 7:00 - 9:00 am',
+    sponsor: 'Panadería La Espiga',
   },
   {
     id: '2',
-    name: 'Nombre del elemento 2',
-    subtitle: 'Subtítulo o descripción corta',
-    imageUri: 'https://picsum.photos/seed/item2/300/200',
-    // TODO: Agrega las propiedades específicas de tu dominio
+    name: 'Ritmo Local',
+    imageUri: 'https://picsum.photos/seed/radio2/300/200',
+    host: 'Andrés Pardo',
+    schedule: 'Martes y jueves, 3:00 - 5:00 pm',
+    sponsor: 'Ferretería El Tornillo',
   },
   {
     id: '3',
-    name: 'Nombre del elemento 3',
-    subtitle: 'Subtítulo o descripción corta',
-    imageUri: 'https://picsum.photos/seed/item3/300/200',
-    // TODO: Agrega las propiedades específicas de tu dominio
+    name: 'Charla Comunitaria',
+    imageUri: 'https://picsum.photos/seed/radio3/300/200',
+    host: 'Lucía Fernández',
+    schedule: 'Miércoles, 6:00 - 7:30 pm',
+    sponsor: 'Droguería San José',
   },
   {
     id: '4',
-    name: 'Nombre del elemento 4',
-    subtitle: 'Subtítulo o descripción corta',
-    imageUri: 'https://picsum.photos/seed/item4/300/200',
-    // TODO: Agrega las propiedades específicas de tu dominio
+    name: 'Noches de Vinilo',
+    imageUri: 'https://picsum.photos/seed/radio4/300/200',
+    host: 'Camilo Restrepo',
+    schedule: 'Sábados, 8:00 - 10:00 pm',
+    sponsor: 'Café La Esquina',
   },
 ];
