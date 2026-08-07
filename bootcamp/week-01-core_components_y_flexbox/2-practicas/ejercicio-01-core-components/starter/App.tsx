@@ -1,8 +1,7 @@
 // ============================================================
 // EJERCICIO 01 — Core Components: Tarjeta de Perfil
 // ============================================================
-// Instrucciones: descomenta CADA SECCIÓN de arriba hacia abajo.
-// Verifica en Expo Go que funciona antes de pasar al siguiente paso.
+// Los 5 pasos ya están integrados en una sola tarjeta final.
 // ============================================================
 
 import React from 'react';
@@ -18,88 +17,55 @@ import {
 
 export default function App(): React.JSX.Element {
   return (
-    // ScrollView allows the content to scroll if it overflows the screen
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.contentContainer}
     >
       <StatusBar barStyle="light-content" backgroundColor="#0d1117" />
 
-      {/* ============================================
-          PASO 1: Estructura base con View y Text
-          ============================================ */}
-      {/* Descomenta las siguientes líneas: */}
       <View style={styles.card}>
-        <Text style={styles.title}>Mi Perfil</Text>
-      </View>
-
-      {/* ============================================
-          PASO 2: Imagen de perfil circular
-          ============================================
-          Reemplaza el bloque del Paso 1 por este:
-      */}
-      <View style={styles.card}>
+        {/* PASO 2: Imagen de perfil circular */}
         <Image
           source={{ uri: 'https://i.pravatar.cc/120' }}
           style={styles.avatar}
           resizeMode="cover"
         />
-        <Text style={styles.title}>Mi Perfil</Text>
-      </View>
 
-      {/* ============================================
-          PASO 3: Información del perfil
-          ============================================
-          Reemplaza el bloque anterior por este:
-      */}
-      <View style={styles.card}>
-        <Image
-          source={{ uri: 'https://i.pravatar.cc/120' }}
-          style={styles.avatar}
-          resizeMode="cover"
-        />
+        {/* PASO 3: Información del perfil */}
         <Text style={styles.name}>Ada Lovelace</Text>
         <Text style={styles.role}>Ingeniera de Software</Text>
         <Text style={styles.bio} numberOfLines={3}>
           Primera programadora de la historia. Escribió el primer algoritmo
           diseñado para ser procesado por una máquina.
         </Text>
-      </View>
 
-      {/* ============================================
-          PASO 4: Fila de estadísticas
-          ============================================
-          Agrega este bloque DENTRO del card, después del bio:
-      */}
-      <View style={styles.statsRow}>
-        <View style={styles.stat}>
-          <Text style={styles.statNumber}>42</Text>
-          <Text style={styles.statLabel}>Posts</Text>
+        {/* PASO 4: Fila de estadísticas */}
+        <View style={styles.statsRow}>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>42</Text>
+            <Text style={styles.statLabel}>Posts</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>1.2k</Text>
+            <Text style={styles.statLabel}>Seguidores</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>318</Text>
+            <Text style={styles.statLabel}>Siguiendo</Text>
+          </View>
         </View>
-        <View style={styles.stat}>
-          <Text style={styles.statNumber}>1.2k</Text>
-          <Text style={styles.statLabel}>Seguidores</Text>
-        </View>
-        <View style={styles.stat}>
-          <Text style={styles.statNumber}>318</Text>
-          <Text style={styles.statLabel}>Siguiendo</Text>
-        </View>
-      </View>
 
-      {/* ============================================
-          PASO 5: Botón de acción con feedback visual
-          ============================================
-          Agrega este bloque después del statsRow:
-      */}
-      <Pressable
-        style={({ pressed }) => [
-          styles.btnFollow,
-          pressed && styles.btnFollowPressed,
-        ]}
-        onPress={() => console.log('¡Siguiendo!')}
-      >
-        <Text style={styles.btnText}>Seguir</Text>
-      </Pressable>
+        {/* PASO 5: Botón de acción con feedback visual */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.btnFollow,
+            pressed && styles.btnFollowPressed,
+          ]}
+          onPress={() => console.log('¡Siguiendo!')}
+        >
+          <Text style={styles.btnText}>Seguir</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }
@@ -117,7 +83,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
 
-  // Card — white rounded container
+  // Card — dark rounded container
   card: {
     backgroundColor: '#161b22',
     borderRadius: 16,
@@ -138,13 +104,7 @@ const styles = StyleSheet.create({
     borderColor: '#61DAFB',
   },
 
-  // PASO 1 / 3 — Textos
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 4,
-  },
+  // PASO 3 — Textos
   name: {
     fontSize: 22,
     fontWeight: 'bold',
