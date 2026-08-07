@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
   },
-
+ 
   // Card — dark rounded container
   card: {
     backgroundColor: '#161b22',
