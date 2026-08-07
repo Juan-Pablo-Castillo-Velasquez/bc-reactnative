@@ -15,9 +15,6 @@ import {
   ListRenderItem,
 } from 'react-native';
 
-// ============================================
-// TIPOS
-// ============================================
 interface Contact {
   id: string;
   name: string;
@@ -25,9 +22,6 @@ interface Contact {
   category: 'familia' | 'trabajo' | 'amigos';
 }
 
-// ============================================
-// DATOS MOCK — 18 contactos
-// ============================================
 const CONTACTS: Contact[] = [
   { id: '1', name: 'Ana García', phone: '555-0101', category: 'familia' },
   { id: '2', name: 'Bruno Martínez', phone: '555-0102', category: 'trabajo' },
@@ -55,49 +49,30 @@ const CATEGORY_COLOR: Record<Contact['category'], string> = {
   amigos: '#f0883e',
 };
 
-// ============================================
-// PASO 1: TextInput controlado
-// ============================================
-// Estado para el texto de búsqueda — descomenta la siguiente línea:
-// const [query, setQuery] = useState<string>('');
-
-// ============================================
-// PASO 2: Filtrado con useMemo
-// ============================================
-// Calcula la lista filtrada solo cuando cambia query — descomenta:
-// const filteredContacts = useMemo(() => {
-//   if (!query.trim()) return CONTACTS;
-//   const lower = query.toLowerCase();
-//   return CONTACTS.filter(
-//     (c) =>
-//       c.name.toLowerCase().includes(lower) ||
-//       c.phone.includes(lower)
-//   );
-// }, [query]);
-
 export default function App(): React.JSX.Element {
-  // PASO 1: mueve el estado aquí dentro del componente
-  // const [query, setQuery] = useState<string>('');
+  const [query, setQuery] = useState<string>('');
 
-  // PASO 2: mueve el useMemo aquí dentro del componente
-  // const filteredContacts = useMemo(...)
+  const filteredContacts = useMemo(() => {
+    if (!query.trim()) return CONTACTS;
+    const lower = query.toLowerCase();
+    return CONTACTS.filter(
+      (c) =>
+        c.name.toLowerCase().includes(lower) ||
+        c.phone.includes(lower)
+    );
+  }, [query]);
 
-  // ============================================
-  // PASO 3: Estado vacío personalizado
-  // ============================================
-  // Descomenta la función renderEmpty:
-  // const renderEmpty = useCallback(() => (
-  //   <View style={styles.emptyContainer}>
-  //     <Text style={styles.emptyText}>
-  //       Sin resultados para "{query}"
-  //     </Text>
-  //     <Text style={styles.emptySubText}>
-  //       Intenta con otro nombre o número
-  //     </Text>
-  //   </View>
-  // ), [query]);
+  const renderEmpty = useCallback(() => (
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyText}>
+        Sin resultados para "{query}"
+      </Text>
+      <Text style={styles.emptySubText}>
+        Intenta con otro nombre o número
+      </Text>
+    </View>
+  ), [query]);
 
-  // renderItem — muestra nombre, teléfono y badge de categoría
   const renderItem: ListRenderItem<Contact> = useCallback(({ item }) => (
     <Pressable
       style={({ pressed }) => [
@@ -127,71 +102,42 @@ export default function App(): React.JSX.Element {
     </Pressable>
   ), []);
 
-  // ============================================
-  // PASO 4: KeyboardAvoidingView
-  // ============================================
-  // Reemplaza el SafeAreaView exterior con este bloque:
-  // return (
-  //   <KeyboardAvoidingView
-  //     style={styles.kvContainer}
-  //     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-  //   >
-  //     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-  //       <SafeAreaView style={styles.container}>
-  //         <StatusBar barStyle="light-content" backgroundColor="#0d1117" />
-  //         {/* PASO 1: TextInput */}
-  //         <View style={styles.searchContainer}>
-  //           <TextInput
-  //             style={styles.searchInput}
-  //             placeholder="Buscar contacto..."
-  //             placeholderTextColor="#8b949e"
-  //             value={query}
-  //             onChangeText={setQuery}
-  //             keyboardType="default"
-  //             returnKeyType="search"
-  //             clearButtonMode="while-editing"
-  //             onSubmitEditing={Keyboard.dismiss}
-  //           />
-  //         </View>
-  //         {/* PASO 2+3: FlatList con filtro */}
-  //         <FlatList
-  //           data={filteredContacts}
-  //           keyExtractor={(item) => item.id}
-  //           renderItem={renderItem}
-  //           ListEmptyComponent={renderEmpty}          // PASO 3
-  //           ItemSeparatorComponent={() => <View style={styles.separator} />}
-  //           contentContainerStyle={styles.listContent}
-  //           keyboardShouldPersistTaps="handled"
-  //         />
-  //       </SafeAreaView>
-  //     </TouchableWithoutFeedback>
-  //   </KeyboardAvoidingView>
-  // );
-
-  // Vista inicial — reemplázala con el bloque del PASO 4 cuando estés listo
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0d1117" />
-      <View style={styles.searchContainer}>
-        {/* PASO 1: descomenta el TextInput aquí */}
-        <View style={styles.searchPlaceholder}>
-          <Text style={styles.placeholderHint}>↑ Descomenta el TextInput (PASO 1)</Text>
-        </View>
-      </View>
-      <FlatList
-        data={CONTACTS}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        contentContainerStyle={styles.listContent}
-      />
-    </SafeAreaView>
+    <KeyboardAvoidingView
+      style={styles.kvContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
+          <StatusBar barStyle="light-content" backgroundColor="#0d1117" />
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar contacto..."
+              placeholderTextColor="#8b949e"
+              value={query}
+              onChangeText={setQuery}
+              keyboardType="default"
+              returnKeyType="search"
+              clearButtonMode="while-editing"
+              onSubmitEditing={Keyboard.dismiss}
+            />
+          </View>
+          <FlatList
+            data={filteredContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            ListEmptyComponent={renderEmpty}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            contentContainerStyle={styles.listContent}
+            keyboardShouldPersistTaps="handled"
+          />
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
-// ============================================
-// ESTILOS
-// ============================================
 const styles = StyleSheet.create({
   kvContainer: {
     flex: 1,
@@ -216,18 +162,6 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 12 : 10,
     color: '#e6edf3',
     fontSize: 16,
-  },
-  searchPlaceholder: {
-    backgroundColor: '#161b22',
-    borderWidth: 1,
-    borderColor: '#30363d',
-    borderRadius: 8,
-    padding: 14,
-    alignItems: 'center',
-  },
-  placeholderHint: {
-    color: '#8b949e',
-    fontSize: 14,
   },
   listContent: {
     flexGrow: 1,
