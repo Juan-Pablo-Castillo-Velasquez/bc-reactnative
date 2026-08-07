@@ -69,7 +69,7 @@ export default function App(): React.JSX.Element {
     </ScrollView>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   // Screen container — fills the entire available space
   screen: {
