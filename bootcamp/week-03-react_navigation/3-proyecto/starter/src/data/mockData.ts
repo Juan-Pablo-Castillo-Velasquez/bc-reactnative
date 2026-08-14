@@ -1,81 +1,95 @@
 // src/data/mockData.ts
-// Datos de prueba genéricos para la app.
-// TODO: reemplazar con datos de tu dominio asignado.
+// Dominio: Radio Comunitaria
+// Datos de prueba de programas radiales (programs), sus conductores
+// (hosts), horarios (schedules) y patrocinadores (sponsors).
 
 import type { Item } from '../types';
 
 // ============================================
-// LISTA PRINCIPAL DE ELEMENTOS
+// LISTA PRINCIPAL DE PROGRAMAS
 // ============================================
-// Estos son datos genéricos de placeholder.
-// Debes reemplazarlos con datos coherentes a tu dominio.
-//
-// Ejemplos:
-//   Biblioteca  → libros con autor, ISBN, páginas
-//   Farmacia    → medicamentos con precio, stock, dosis
-//   Gimnasio    → rutinas con duración, grupos musculares
-//   Restaurante → platillos con precio, ingredientes
-//   Cine        → películas con director, año, género
 
 export const ITEMS: Item[] = [
   {
     id: '1',
-    name: 'Elemento 01',
-    description: 'Descripción del primer elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Despertar Comunitario',
+    description: 'Magazine matutino con noticias locales, clima y entrevistas a líderes del barrio.',
+    host: 'María Fernanda Ríos',
+    schedule: 'Lun-Vie 6:00-8:00 AM',
+    sponsor: 'Panadería El Trigal',
+    genre: 'Noticias',
   },
   {
     id: '2',
-    name: 'Elemento 02',
-    description: 'Descripción del segundo elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Ritmo Barrial',
+    description: 'Música tropical y salsa dedicada a los oyentes del sector, con saludos en vivo.',
+    host: 'Carlos "El Sonero" Pérez',
+    schedule: 'Lun-Vie 10:00-12:00 PM',
+    sponsor: 'Ferretería San José',
+    genre: 'Música',
   },
   {
     id: '3',
-    name: 'Elemento 03',
-    description: 'Descripción del tercer elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Voces de la Comuna',
+    description: 'Espacio de opinión y debate sobre temas sociales y de convivencia ciudadana.',
+    host: 'Andrea Gómez',
+    schedule: 'Mar-Jue 2:00-3:30 PM',
+    sponsor: 'Droguería Central',
+    genre: 'Opinión',
   },
   {
     id: '4',
-    name: 'Elemento 04',
-    description: 'Descripción del cuarto elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Deporte Total',
+    description: 'Resumen deportivo local y nacional, con análisis de los partidos del fin de semana.',
+    host: 'Jorge Iván Salazar',
+    schedule: 'Lun 4:00-5:00 PM',
+    sponsor: 'Gimnasio PowerFit',
+    genre: 'Deportes',
   },
   {
     id: '5',
-    name: 'Elemento 05',
-    description: 'Descripción del quinto elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Tardes de Bolero',
+    description: 'Boleros y música romántica clásica para acompañar la tarde.',
+    host: 'Rosa Elena Martínez',
+    schedule: 'Mié 3:00-4:00 PM',
+    sponsor: 'Floristería Primavera',
+    genre: 'Música',
   },
   {
     id: '6',
-    name: 'Elemento 06',
-    description: 'Descripción del sexto elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Jóvenes al Aire',
+    description: 'Programa hecho por y para jóvenes: música urbana, tecnología y cultura pop.',
+    host: 'Sebastián Torres',
+    schedule: 'Vie 5:00-7:00 PM',
+    sponsor: 'Internet Café NetZone',
+    genre: 'Entretenimiento',
   },
   {
     id: '7',
-    name: 'Elemento 07',
-    description: 'Descripción del séptimo elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Salud en Comunidad',
+    description: 'Consejos de salud preventiva con invitados del centro de salud local.',
+    host: 'Dra. Patricia Lozano',
+    schedule: 'Jue 9:00-10:00 AM',
+    sponsor: 'Droguería Central',
+    genre: 'Salud',
   },
   {
     id: '8',
-    name: 'Elemento 08',
-    description: 'Descripción del octavo elemento de tu dominio.',
-    // TODO: agregar campos específicos de tu dominio
+    name: 'Noche de Vallenato',
+    description: 'Lo mejor del vallenato clásico y nuevo, con dedicatorias de los oyentes.',
+    host: 'Luis Alberto Díaz',
+    schedule: 'Sáb 8:00-10:00 PM',
+    sponsor: 'Licorera La Esquina',
+    genre: 'Música',
   },
 ];
 
 // ============================================
-// LISTA DE FAVORITOS
+// LISTA DE PROGRAMAS FAVORITOS
 // ============================================
-// Subconjunto de elementos para la pestaña Favorites.
-// TODO: seleccionar elementos coherentes con tu dominio.
 
 export const FAVORITES: Item[] = [
   ITEMS[0],
   ITEMS[2],
-  ITEMS[4],
+  ITEMS[5],
 ];

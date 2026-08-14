@@ -1,15 +1,15 @@
 // src/navigation/types.ts
-// Define los tipos de parámetros para cada navigator.
-// Esto habilita autocompletado y verificación en tiempo de compilación.
+// Tipos de parámetros para cada navigator.
+// Dominio: Radio Comunitaria
 
 // ============================================
 // TAB NAVIGATOR — pantallas de nivel raíz
 // ============================================
 
 export type RootTabParamList = {
-  // Pestaña principal con Stack interno (lista → detalle)
+  // Pestaña principal con Stack interno (lista de programas → detalle)
   Home: undefined;
-  // Pestaña secundaria de favoritos
+  // Pestaña secundaria de programas favoritos
   Favorites: undefined;
 };
 
@@ -18,15 +18,17 @@ export type RootTabParamList = {
 // ============================================
 
 export type HomeStackParamList = {
-  // Pantalla de lista (sin params)
+  // Pantalla de lista de programas (sin params)
   HomeList: undefined;
-  // Pantalla de detalle — recibe id y name como mínimo
-  // TODO: agregar campos específicos de tu dominio
-  // Ejemplo (Biblioteca):   author: string; isbn: string;
-  // Ejemplo (Farmacia):     price: number; stock: number;
-  // Ejemplo (Cine):         director: string; year: number;
+  // Pantalla de detalle de un programa — recibe todos los campos
+  // necesarios para mostrar host, horario y patrocinador sin
+  // tener que volver a consultar el dataset.
   HomeDetail: {
     id: string;
     name: string;
+    host: string;
+    schedule: string;
+    sponsor: string;
+    genre: string;
   };
 };

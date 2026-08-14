@@ -1,7 +1,6 @@
 // ============================================
-// THEME — Semana 03
+// THEME — Radio Comunitaria
 // Constantes de estilo globales.
-// Úsalas en todos los StyleSheet del proyecto.
 // ============================================
 
 export const COLORS = {
@@ -19,10 +18,9 @@ export const COLORS = {
   textSecondary: '#8b949e',
   textMuted: '#6e7681',
 
-  // Acento — puedes cambiar este color según tu dominio
-  // Ejemplos: '#3fb950' (verde), '#f0883e' (naranja), '#a5d6ff' (azul claro)
-  accent: '#61DAFB',
-  accentDim: '#61DAFB33',
+  // Acento — naranja, evoca la calidez de una radio comunitaria "al aire"
+  accent: '#f0883e',
+  accentDim: '#f0883e33',
 
   // Semánticos
   success: '#3fb950',
@@ -32,7 +30,6 @@ export const COLORS = {
 } as const;
 
 export const TYPOGRAPHY = {
-  // Tamaños de fuente
   size: {
     xs: 11,
     sm: 13,
@@ -42,8 +39,6 @@ export const TYPOGRAPHY = {
     xl: 24,
     xxl: 30,
   },
-
-  // Pesos
   weight: {
     regular: '400' as const,
     medium: '500' as const,
