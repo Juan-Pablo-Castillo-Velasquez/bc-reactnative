@@ -1,6 +1,6 @@
 // src/screens/HomeScreen.tsx
-// Pantalla de lista — muestra todos los elementos del dominio.
-// Al presionar un ítem navega al DetailScreen pasando los params.
+// Pantalla de lista — muestra todos los programas de la radio comunitaria.
+// Al presionar un programa navega al DetailScreen pasando los params.
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -17,7 +17,6 @@ import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../theme';
 import type { Item } from '../types';
 import type { HomeStackParamList } from '../navigation/types';
 
-// Tipo del navigation hook para este Stack
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   HomeStackParamList,
   'HomeList'
@@ -27,23 +26,19 @@ export function HomeScreen(): React.JSX.Element {
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
   /**
-   * Navega al DetailScreen pasando los datos del ítem seleccionado.
-   * TODO: agrega los campos extra de tu dominio a los params
-   * Ejemplo: navigation.navigate('HomeDetail', { id, name, author, isbn })
+   * Navega al DetailScreen pasando los datos del programa seleccionado.
    */
   function handleItemPress(item: Item): void {
     navigation.navigate('HomeDetail', {
       id: item.id,
       name: item.name,
-      // TODO: pasar campos adicionales de tu dominio
+      host: item.host,
+      schedule: item.schedule,
+      sponsor: item.sponsor,
+      genre: item.genre,
     });
   }
 
-  /**
-   * Renderiza cada ítem de la lista.
-   * TODO: adaptar el diseño de la tarjeta a tu dominio.
-   * Puedes mostrar más información (precio, autor, género, etc.)
-   */
   function renderItem({ item }: { item: Item }): React.JSX.Element {
     return (
       <Pressable
@@ -52,16 +47,19 @@ export function HomeScreen(): React.JSX.Element {
           pressed && styles.cardPressed,
         ]}
         onPress={() => handleItemPress(item)}
-        // testID permite encontrar el elemento en tests
         testID={`item-${item.id}`}
       >
+        <View style={styles.genreBadge}>
+          <Text style={styles.genreBadgeText}>{item.genre}</Text>
+        </View>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemDescription} numberOfLines={2}>
           {item.description}
         </Text>
-        {/* TODO: agregar más información del ítem según tu dominio */}
-        {/* Ejemplo (Farmacia): <Text style={styles.price}>${item.price}</Text> */}
-        {/* Ejemplo (Biblioteca): <Text style={styles.author}>{item.author}</Text> */}
+        <View style={styles.metaRow}>
+          <Text style={styles.metaText}>🎙️ {item.host}</Text>
+          <Text style={styles.metaText}>🕐 {item.schedule}</Text>
+        </View>
         <Text style={styles.chevron}>{'›'}</Text>
       </Pressable>
     );
@@ -69,17 +67,16 @@ export function HomeScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {/* TODO: agregar un header o título descriptivo de tu dominio */}
-      {/* <Text style={styles.header}>Mi Biblioteca</Text> */}
+      <Text style={styles.header}>Programación</Text>
       <FlatList
         data={ITEMS}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
-        // Separador visual entre ítems
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        // TODO: agregar ListEmptyComponent para cuando no haya datos
-        // ListEmptyComponent={<Text style={styles.empty}>Sin elementos</Text>}
+        ListEmptyComponent={
+          <Text style={styles.empty}>No hay programas disponibles</Text>
+        }
       />
     </View>
   );
@@ -89,6 +86,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  header: {
+    fontSize: TYPOGRAPHY.size.lg,
+    fontWeight: TYPOGRAPHY.weight.bold,
+    color: COLORS.textPrimary,
+    paddingHorizontal: SPACING.base,
+    paddingTop: SPACING.base,
+    paddingBottom: SPACING.sm,
   },
   list: {
     padding: SPACING.base,
@@ -104,6 +109,19 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     backgroundColor: COLORS.surfaceAlt,
   },
+  genreBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: COLORS.accentDim,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+    marginBottom: SPACING.xs,
+  },
+  genreBadgeText: {
+    fontSize: TYPOGRAPHY.size.xs,
+    fontWeight: TYPOGRAPHY.weight.medium,
+    color: COLORS.accent,
+  },
   itemName: {
     fontSize: TYPOGRAPHY.size.md,
     fontWeight: TYPOGRAPHY.weight.semibold,
@@ -114,6 +132,15 @@ const styles = StyleSheet.create({
     fontSize: TYPOGRAPHY.size.sm,
     color: COLORS.textSecondary,
     lineHeight: 18,
+    marginBottom: SPACING.sm,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  metaText: {
+    fontSize: TYPOGRAPHY.size.xs,
+    color: COLORS.textMuted,
   },
   chevron: {
     position: 'absolute',
@@ -124,5 +151,10 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: SPACING.sm,
+  },
+  empty: {
+    textAlign: 'center',
+    color: COLORS.textMuted,
+    marginTop: SPACING.xxl,
   },
 });

@@ -1,29 +1,26 @@
 // src/screens/FavoritesScreen.tsx
 // Segunda pestaña del Tab Navigator.
-// Muestra una lista de elementos favoritos del dominio.
+// Muestra los programas favoritos/guardados del oyente.
 
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { FAVORITES } from '../data/mockData';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../theme';
 import type { Item } from '../types';
 
 export function FavoritesScreen(): React.JSX.Element {
-  /**
-   * Renderiza cada ítem favorito.
-   * TODO: adaptar el diseño a tu dominio (igual que HomeScreen.renderItem)
-   */
   function renderFavorite({ item }: { item: Item }): React.JSX.Element {
     return (
       <View style={styles.card}>
-        {/* Ícono de favorito */}
         <Text style={styles.heartIcon}>♥</Text>
         <View style={styles.cardContent}>
           <Text style={styles.itemName}>{item.name}</Text>
           <Text style={styles.itemDescription} numberOfLines={2}>
             {item.description}
           </Text>
-          {/* TODO: agregar campos de tu dominio igual que en HomeScreen */}
+          <Text style={styles.metaText}>
+            🎙️ {item.host} · 🕐 {item.schedule}
+          </Text>
         </View>
       </View>
     );
@@ -31,9 +28,7 @@ export function FavoritesScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {/* TODO: cambiar el título según tu dominio */}
-      {/* Ejemplos: "Mis Libros Favoritos", "Medicamentos Guardados", etc. */}
-      <Text style={styles.title}>Favoritos</Text>
+      <Text style={styles.title}>Programas Favoritos</Text>
       <FlatList
         data={FAVORITES}
         keyExtractor={(item) => item.id}
@@ -43,8 +38,7 @@ export function FavoritesScreen(): React.JSX.Element {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
-              {/* TODO: personalizar el mensaje vacío según tu dominio */}
-              No tienes favoritos todavía
+              Aún no has guardado programas favoritos
             </Text>
           </View>
         }
@@ -98,6 +92,11 @@ const styles = StyleSheet.create({
     fontSize: TYPOGRAPHY.size.sm,
     color: COLORS.textSecondary,
     lineHeight: 18,
+    marginBottom: SPACING.xs,
+  },
+  metaText: {
+    fontSize: TYPOGRAPHY.size.xs,
+    color: COLORS.textMuted,
   },
   separator: {
     height: SPACING.sm,

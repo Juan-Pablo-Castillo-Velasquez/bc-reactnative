@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "week03-navigation",
-    "slug": "week03-navigation",
+    "name": "Radio Comunitaria",
+    "slug": "radio-comunitaria",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,14 +13,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "dev.bootcamp.week03navigation"
+      "bundleIdentifier": "dev.bootcamp.radiocomunitaria"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0d1117"
       },
-      "package": "dev.bootcamp.week03navigation"
+      "package": "dev.bootcamp.radiocomunitaria"
     },
     "plugins": [
       "expo-router"

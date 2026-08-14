@@ -1,6 +1,6 @@
 // src/types/index.ts
-// Define los tipos de datos del dominio.
-// Adapta la interfaz Item a tu dominio asignado.
+// Dominio: Radio Comunitaria
+// Entidades: programs, hosts, schedules, sponsors
 
 // ============================================
 // INTERFACE PRINCIPAL DEL DOMINIO
@@ -8,40 +8,14 @@
 
 export interface Item {
   id: string;
-  // Nombre del elemento (libro, medicamento, película, rutina, etc.)
+  // Nombre del programa radial
   name: string;
-  // Descripción general del elemento
+  // Descripción general del programa
   description: string;
 
-  // TODO: agregar propiedades específicas de tu dominio
-  // Ejemplos según dominio:
-
-  // Biblioteca:
-  // author: string;
-  // isbn: string;
-  // pages: number;
-  // genre: string;
-
-  // Farmacia:
-  // price: number;
-  // stock: number;
-  // dosage: string;
-  // requiresPrescription: boolean;
-
-  // Gimnasio:
-  // duration: number;   // en minutos
-  // difficulty: 'basic' | 'intermediate' | 'advanced';
-  // muscleGroups: string[];
-
-  // Restaurante:
-  // price: number;
-  // ingredients: string[];
-  // isVegetarian: boolean;
-  // category: string;
-
-  // Cine:
-  // director: string;
-  // year: number;
-  // genre: string;
-  // duration: number;
+  // Campos específicos del dominio "Radio Comunitaria"
+  host: string; // Nombre del conductor/a o presentador/a (hosts)
+  schedule: string; // Horario de emisión (schedules), ej. "Lun-Vie 8:00-10:00 AM"
+  sponsor: string; // Patrocinador principal del programa (sponsors)
+  genre: string; // Género/categoría del programa (música, noticias, deportes, etc.)
 }
