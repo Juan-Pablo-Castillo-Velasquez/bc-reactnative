@@ -22,9 +22,9 @@
       },
       "package": "dev.bootcamp.radiocomunitaria"
     },
+    "newArchEnabled": true,
     "plugins": [
-      "expo-router"
-    ],
-    "newArchEnabled": true
+      "expo-status-bar"
+    ]
   }
 }
