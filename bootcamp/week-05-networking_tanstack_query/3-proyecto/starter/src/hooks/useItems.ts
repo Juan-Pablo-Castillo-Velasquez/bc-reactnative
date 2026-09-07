@@ -1,6 +1,13 @@
 // src/hooks/useItems.ts
-// Custom hooks que encapsulan la lógica de fetching del dominio.
-// Los componentes consumen estos hooks, no llaman a apiClient directamente.
+// Custom hooks que encapsulan la lógica de fetching del dominio
+// Radio Comunitaria. Los componentes consumen estos hooks, no llaman
+// a apiClient directamente.
+//
+// NOTA: mientras el backend real de bc-expressjs (endpoint /programs con
+// host, schedule y sponsor) no está desplegado y accesible desde el
+// móvil, se usa JSONPlaceholder (/posts) como API de práctica, mapeando
+// su forma de datos (title, body) a nuestro modelo de dominio
+// (name, description).
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../services/api';
@@ -10,44 +17,51 @@ import type { CreateItemPayload, Item } from '../types';
 // QUERY KEY
 // ============================================================
 // Centralizar la queryKey evita errores de typo al invalidar.
-// TODO: renombra según tu dominio: 'books', 'products', 'dishes', etc.
-export const ITEMS_QUERY_KEY = ['items'] as const;
+export const PROGRAMS_QUERY_KEY = ['programs'] as const;
 
 // ============================================================
-// useItems — obtener lista de ítems
+// Forma cruda que retorna la API de práctica (JSONPlaceholder /posts)
 // ============================================================
-// TODO: implementar la queryFn que llama a tu endpoint real.
-//
-// Ejemplo con JSONPlaceholder (proxy mientras tienes API real):
-//   const { data } = await apiClient.get<Item[]>('/posts?_limit=20');
-//
-// Ejemplo con tu API propia:
-//   const { data } = await apiClient.get<Item[]>('/items');
+interface RawPost {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
+
+function mapPostToItem(post: RawPost): Item {
+  return {
+    id: post.id,
+    name: post.title,
+    description: post.body,
+  };
+}
+
+// ============================================================
+// useItems — obtener lista de programas
+// ============================================================
 
 export function useItems() {
   return useQuery<Item[]>({
-    queryKey: ITEMS_QUERY_KEY,
+    queryKey: PROGRAMS_QUERY_KEY,
     queryFn: async () => {
-      // TODO: reemplaza '/posts' por el endpoint de tu dominio
-      // La respuesta debe ser un array de objetos que mapees a tu interfaz Item
-      const { data } = await apiClient.get<Item[]>('/posts?_limit=15');
-      return data;
+      const { data } = await apiClient.get<RawPost[]>('/posts?_limit=15');
+      return data.map(mapPostToItem);
     },
   });
 }
 
 // ============================================================
-// useItemById — obtener un ítem individual por ID
+// useItemById — obtener un programa individual por ID
 // ============================================================
 // Usado en DetailScreen para obtener los detalles completos.
 
 export function useItemById(id: string | number) {
   return useQuery<Item>({
-    queryKey: [...ITEMS_QUERY_KEY, id],
+    queryKey: [...PROGRAMS_QUERY_KEY, id],
     queryFn: async () => {
-      // TODO: reemplaza '/posts' por el endpoint de tu dominio
-      const { data } = await apiClient.get<Item>(`/posts/${id}`);
-      return data;
+      const { data } = await apiClient.get<RawPost>(`/posts/${id}`);
+      return mapPostToItem(data);
     },
     // La query solo corre si hay un id válido
     enabled: !!id,
@@ -55,45 +69,44 @@ export function useItemById(id: string | number) {
 }
 
 // ============================================================
-// useCreateItem — crear un nuevo ítem
+// useCreateItem — crear un nuevo programa
 // ============================================================
-// TODO: implementar la mutationFn que hace el POST a tu API.
 
 export function useCreateItem() {
   const queryClient = useQueryClient();
 
   return useMutation<Item, Error, CreateItemPayload>({
     mutationFn: async (payload) => {
-      // TODO: reemplaza '/posts' por el endpoint de tu dominio
-      const { data } = await apiClient.post<Item>('/posts', payload);
-      return data;
+      const { data } = await apiClient.post<RawPost>('/posts', {
+        title: payload.name,
+        body: payload.description,
+        userId: 1,
+      });
+      return mapPostToItem(data);
     },
     onSuccess: () => {
-      // Invalida el caché → TanStack Query refetch la lista automáticamente
-      queryClient.invalidateQueries({ queryKey: ITEMS_QUERY_KEY });
+      // Invalida el caché → TanStack Query hace refetch de la lista automáticamente
+      queryClient.invalidateQueries({ queryKey: PROGRAMS_QUERY_KEY });
     },
     onError: (error) => {
-      // TODO: mostrar un toast o alerta al usuario con el mensaje de error
-      console.error('Failed to create item:', error.message);
+      console.error('No se pudo crear el programa:', error.message);
     },
   });
 }
 
 // ============================================================
-// useDeleteItem — eliminar un ítem por ID
+// useDeleteItem — eliminar un programa por ID
 // ============================================================
-// TODO: implementar si tu dominio lo requiere.
 
 export function useDeleteItem() {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, string | number>({
     mutationFn: async (id) => {
-      // TODO: reemplaza '/posts' por el endpoint de tu dominio
       await apiClient.delete(`/posts/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ITEMS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: PROGRAMS_QUERY_KEY });
     },
   });
 }
