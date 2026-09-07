@@ -1,19 +1,18 @@
 // src/screens/DetailScreen.tsx
-// Pantalla de detalle: muestra la información completa de un ítem
-// y permite guardarlo / quitarlo usando el store de Zustand.
-// Esta pantalla demuestra cómo acceder al store desde cualquier screen.
+// Pantalla de detalle: muestra la información completa de un programa
+// (host, horario, patrocinador) y permite guardarlo / quitarlo usando
+// el store de Zustand. Demuestra cómo acceder al store desde cualquier
+// screen sin recibir props.
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRoute, type RouteProp } from '@react-navigation/native';
 
+import { ITEMS } from '../data/mockData';
+import { useSavedStore } from '../stores/savedStore';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../theme';
+import type { Item } from '../types';
 import type { HomeStackParamList } from '../navigation/types';
-
-// TODO: importar el store y el tipo Item
-// import { useSavedStore } from '../stores/savedStore';
-// import type { Item } from '../types';
-// import { ITEMS } from '../data/mockData';
 
 type DetailRouteProp = RouteProp<HomeStackParamList, 'HomeDetail'>;
 
@@ -23,63 +22,68 @@ type DetailRouteProp = RouteProp<HomeStackParamList, 'HomeDetail'>;
 
 export function DetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
-  const { id, name } = route.params;
+  const { id, name, host, schedule, sponsor, genre } = route.params;
 
-  // TODO: buscar el ítem completo en ITEMS usando el id de params
-  // const item: Item | undefined = ITEMS.find((i) => i.id === id);
+  // Se busca el ítem completo en ITEMS para obtener la descripción,
+  // que no viaja en los params de navegación.
+  const item: Item | undefined = ITEMS.find((i) => i.id === id);
 
   // ──────────────────────────────────────────────────────────
-  // TODO: obtener los selectores del savedStore
+  // Selectores del savedStore — cada uno individual para evitar
+  // re-renders innecesarios cuando cambia una parte del store que
+  // esta pantalla no usa.
   // ──────────────────────────────────────────────────────────
-  // Usar selectores individuales para evitar re-renders innecesarios:
-  //
-  // const isItemSaved = useSavedStore((state) => state.isItemSaved);
-  // const addItem    = useSavedStore((state) => state.addItem);
-  // const removeItem = useSavedStore((state) => state.removeItem);
-  //
-  // Luego calcular si el ítem actual está guardado:
-  // const isSaved = isItemSaved(id);
+  const isItemSaved = useSavedStore((state) => state.isItemSaved);
+  const addItem = useSavedStore((state) => state.addItem);
+  const removeItem = useSavedStore((state) => state.removeItem);
 
-  // Placeholder hasta que el store esté implementado
-  const isSaved = false;
+  const isSaved = isItemSaved(id);
 
-  // TODO: implementar handleToggleSave
-  // Si el ítem está guardado → removeItem(id)
-  // Si no está guardado → addItem(item)  [necesitas el objeto Item completo]
-  const handleToggleSave = (): void => {
-    // TODO: implementar
-    // if (isSaved) {
-    //   removeItem(id);
-    // } else if (item) {
-    //   addItem(item);
-    // }
-  };
+  function handleToggleSave(): void {
+    if (isSaved) {
+      removeItem(id);
+    } else if (item) {
+      addItem(item);
+    }
+  }
 
   return (
     <View style={styles.container}>
-      {/* Icono / thumbnail del ítem */}
+      {/* Icono / thumbnail del programa */}
       <View style={styles.hero}>
         <Text style={styles.heroLetter}>{name.charAt(0)}</Text>
       </View>
 
       {/* Información principal */}
       <View style={styles.info}>
+        <View style={styles.genreBadge}>
+          <Text style={styles.genreBadgeText}>{genre}</Text>
+        </View>
         <Text style={styles.title}>{name}</Text>
         <Text style={styles.id}>ID: {id}</Text>
 
-        {/* TODO: mostrar la descripción del ítem (item.description) */}
-        {/* TODO: mostrar campos específicos de tu dominio */}
         <Text style={styles.description}>
-          Adapta esta pantalla a tu dominio: muestra los detalles
-          relevantes de tu ítem aquí.
+          {item?.description ?? 'Descripción no disponible para este programa.'}
         </Text>
+
+        <View style={styles.metaBlock}>
+          <Text style={styles.metaLabel}>Presentador/a</Text>
+          <Text style={styles.metaValue}>🎙️ {host}</Text>
+        </View>
+        <View style={styles.metaBlock}>
+          <Text style={styles.metaLabel}>Horario de emisión</Text>
+          <Text style={styles.metaValue}>🕐 {schedule}</Text>
+        </View>
+        <View style={styles.metaBlock}>
+          <Text style={styles.metaLabel}>Patrocinador</Text>
+          <Text style={styles.metaValue}>🤝 {sponsor}</Text>
+        </View>
       </View>
 
       {/* ──────────────────────────────────────────────────── */}
       {/* BOTÓN GUARDAR / QUITAR — conectado al store Zustand  */}
       {/* ──────────────────────────────────────────────────── */}
-      {/* Este botón demuestra el estado compartido entre pantallas:
-          al guardar aquí, el badge del Tab "Guardados" se actualiza
+      {/* Al guardar aquí, el badge del Tab "Favoritos" se actualiza
           automáticamente sin necesidad de pasar props ni callbacks. */}
       <Pressable
         style={({ pressed }) => [
@@ -128,6 +132,19 @@ const styles = StyleSheet.create({
   info: {
     gap: SPACING.sm,
   },
+  genreBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+  },
+  genreBadgeText: {
+    ...TYPOGRAPHY.label,
+    color: COLORS.accent,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   title: {
     ...TYPOGRAPHY.h2,
   },
@@ -141,6 +158,18 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     lineHeight: 24,
     marginTop: SPACING.sm,
+  },
+  metaBlock: {
+    gap: 2,
+    marginTop: SPACING.xs,
+  },
+  metaLabel: {
+    ...TYPOGRAPHY.label,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  metaValue: {
+    ...TYPOGRAPHY.body,
   },
   saveButton: {
     backgroundColor: COLORS.card,
