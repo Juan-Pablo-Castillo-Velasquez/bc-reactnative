@@ -1,15 +1,21 @@
 // src/types/index.ts
-// Interface principal del dominio.
-// TODO: adaptar a tu dominio asignado.
+// Dominio: Radio Comunitaria
+// Entidades: programs, hosts, schedules, sponsors
+
+// ============================================================
+// INTERFACE PRINCIPAL DEL DOMINIO
+// ============================================================
 
 export interface Item {
   id: string;
+  // Nombre del programa radial
   name: string;
+  // Descripción general del programa
   description: string;
-  // TODO: agregar campos específicos de tu dominio
-  // Biblioteca:   author: string; isbn: string; pages: number;
-  // Farmacia:     price: number; stock: number; dosage: string;
-  // Gimnasio:     duration: number; difficulty: 'basic' | 'intermediate' | 'advanced';
-  // Restaurante:  price: number; category: string; isVegetarian: boolean;
-  // Cine:         director: string; year: number; genre: string;
+
+  // Campos específicos del dominio "Radio Comunitaria"
+  host: string; // Presentador/a del programa (hosts)
+  schedule: string; // Horario de emisión (schedules), ej. "Lun-Vie 8:00-10:00 AM"
+  sponsor: string; // Patrocinador principal del programa (sponsors)
+  genre: string; // Género/categoría del programa (música, noticias, deportes, etc.)
 }

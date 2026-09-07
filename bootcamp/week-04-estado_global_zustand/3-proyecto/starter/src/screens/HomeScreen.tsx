@@ -1,6 +1,6 @@
 // src/screens/HomeScreen.tsx
-// Pantalla principal: lista de ítems con navegación al detalle.
-// El estudiante debe adaptar el diseño y los campos a su dominio.
+// Pantalla principal: lista de programas de la Radio Comunitaria,
+// con navegación al detalle de cada uno.
 
 import React from 'react';
 import {
@@ -24,8 +24,7 @@ type HomeScreenNavProp = NativeStackNavigationProp<HomeStackParamList, 'HomeList
 // ============================================================
 // SUB-COMPONENTE: ItemCard
 // ============================================================
-// TODO: adaptar la tarjeta a las propiedades específicas de tu dominio.
-//   Mostrar, por ejemplo, price (Farmacia), author (Biblioteca), etc.
+// Tarjeta de programa: género, nombre, descripción, presentador y horario.
 
 interface ItemCardProps {
   item: Item;
@@ -39,20 +38,24 @@ function ItemCard({ item, onPress }: ItemCardProps): React.JSX.Element {
       onPress={onPress}
       testID={`item-card-${item.id}`}
     >
-      {/* Placeholder del thumbnail */}
       <View style={styles.thumbnail}>
-        {/* TODO: reemplazar con imagen real usando expo-image o Image */}
         <Text style={styles.thumbnailText}>{item.name.charAt(0)}</Text>
       </View>
 
       <View style={styles.cardContent}>
+        <View style={styles.genreBadge}>
+          <Text style={styles.genreBadgeText}>{item.genre}</Text>
+        </View>
         <Text style={styles.cardTitle} numberOfLines={1}>
           {item.name}
         </Text>
         <Text style={styles.cardDescription} numberOfLines={2}>
           {item.description}
         </Text>
-        {/* TODO: agregar campos específicos de tu dominio aquí */}
+        <View style={styles.metaRow}>
+          <Text style={styles.metaText}>🎙️ {item.host}</Text>
+          <Text style={styles.metaText}>🕐 {item.schedule}</Text>
+        </View>
       </View>
 
       <Text style={styles.chevron}>›</Text>
@@ -67,15 +70,20 @@ function ItemCard({ item, onPress }: ItemCardProps): React.JSX.Element {
 export function HomeScreen(): React.JSX.Element {
   const navigation = useNavigation<HomeScreenNavProp>();
 
-  // TODO: leer los ítems desde un Zustand store (opcional bonus)
-  // o desde la API real de tu dominio (semana 5 — TanStack Query)
   const items = ITEMS;
 
   const renderItem: ListRenderItem<Item> = ({ item }) => (
     <ItemCard
       item={item}
       onPress={() =>
-        navigation.navigate('HomeDetail', { id: item.id, name: item.name })
+        navigation.navigate('HomeDetail', {
+          id: item.id,
+          name: item.name,
+          host: item.host,
+          schedule: item.schedule,
+          sponsor: item.sponsor,
+          genre: item.genre,
+        })
       }
     />
   );
@@ -88,14 +96,13 @@ export function HomeScreen(): React.JSX.Element {
         renderItem={renderItem}
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        // TODO: agregar un header con estadísticas (total de ítems, etc.)
         ListHeaderComponent={
           <Text style={styles.sectionLabel}>
-            {items.length} ítem{items.length !== 1 ? 's' : ''}
+            {items.length} programa{items.length !== 1 ? 's' : ''} en la parrilla
           </Text>
         }
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No hay ítems disponibles.</Text>
+          <Text style={styles.emptyText}>No hay programas disponibles.</Text>
         }
       />
     </View>
@@ -153,12 +160,33 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: SPACING.xs,
   },
+  genreBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+  },
+  genreBadgeText: {
+    ...TYPOGRAPHY.label,
+    color: COLORS.accent,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   cardTitle: {
     ...TYPOGRAPHY.body,
     fontWeight: '600',
   },
   cardDescription: {
     ...TYPOGRAPHY.caption,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    gap: SPACING.md,
+  },
+  metaText: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.textMuted,
   },
   chevron: {
     ...TYPOGRAPHY.h2,

@@ -1,57 +1,92 @@
 // src/data/mockData.ts
-// Datos de ejemplo genéricos para el proyecto.
-// El estudiante debe reemplazar estos datos con los de su dominio asignado.
+// Dominio: Radio Comunitaria
+// Datos de prueba de programas radiales (programs), sus conductores
+// (hosts), horarios (schedules) y patrocinadores (sponsors).
 
 import type { Item } from '../types';
 
 // ============================================================
-// LISTA DE ÍTEMS
+// LISTA DE PROGRAMAS
 // ============================================================
-// TODO: reemplaza estos ítems con los de tu dominio asignado.
-//   Biblioteca  → libros con author, year, genre
-//   Farmacia    → medicamentos con price, stock, prescription
-//   Gimnasio    → clases con instructor, schedule, capacity
-//   Restaurante → platillos con price, category, spiceLevel
-//   Cine        → películas con director, duration, genre
+
 export const ITEMS: Item[] = [
   {
     id: '1',
-    name: 'Ítem Uno',
-    description: 'Descripción detallada del primer ítem. Adapta este campo a tu dominio.',
+    name: 'Despertar Comunitario',
+    description:
+      'Magazine matutino con noticias locales, clima y entrevistas a líderes del barrio.',
+    host: 'María Fernanda Ríos',
+    schedule: 'Lun-Vie 6:00-8:00 AM',
+    sponsor: 'Panadería El Trigal',
+    genre: 'Noticias',
   },
   {
     id: '2',
-    name: 'Ítem Dos',
-    description: 'Descripción detallada del segundo ítem. Adapta este campo a tu dominio.',
+    name: 'Ritmo Barrial',
+    description:
+      'Música tropical y salsa dedicada a los oyentes del sector, con saludos en vivo.',
+    host: 'Carlos "El Sonero" Pérez',
+    schedule: 'Lun-Vie 10:00-12:00 PM',
+    sponsor: 'Ferretería San José',
+    genre: 'Música',
   },
   {
     id: '3',
-    name: 'Ítem Tres',
-    description: 'Descripción detallada del tercer ítem. Adapta este campo a tu dominio.',
+    name: 'Voces de la Comuna',
+    description:
+      'Espacio de opinión y debate sobre temas sociales y de convivencia ciudadana.',
+    host: 'Andrea Gómez',
+    schedule: 'Mar-Jue 2:00-3:30 PM',
+    sponsor: 'Droguería Central',
+    genre: 'Opinión',
   },
   {
     id: '4',
-    name: 'Ítem Cuatro',
-    description: 'Descripción detallada del cuarto ítem. Adapta este campo a tu dominio.',
+    name: 'Deporte Total',
+    description:
+      'Resumen deportivo local y nacional, con análisis de los partidos del fin de semana.',
+    host: 'Jorge Iván Salazar',
+    schedule: 'Lun 4:00-5:00 PM',
+    sponsor: 'Gimnasio PowerFit',
+    genre: 'Deportes',
   },
   {
     id: '5',
-    name: 'Ítem Cinco',
-    description: 'Descripción detallada del quinto ítem. Adapta este campo a tu dominio.',
+    name: 'Tardes de Bolero',
+    description: 'Boleros y música romántica clásica para acompañar la tarde.',
+    host: 'Rosa Elena Martínez',
+    schedule: 'Mié 3:00-4:00 PM',
+    sponsor: 'Floristería Primavera',
+    genre: 'Música',
   },
   {
     id: '6',
-    name: 'Ítem Seis',
-    description: 'Descripción detallada del sexto ítem. Adapta este campo a tu dominio.',
+    name: 'Jóvenes al Aire',
+    description:
+      'Programa hecho por y para jóvenes: música urbana, tecnología y cultura pop.',
+    host: 'Sebastián Torres',
+    schedule: 'Vie 5:00-7:00 PM',
+    sponsor: 'Internet Café NetZone',
+    genre: 'Entretenimiento',
   },
   {
     id: '7',
-    name: 'Ítem Siete',
-    description: 'Descripción detallada del séptimo ítem. Adapta este campo a tu dominio.',
+    name: 'Salud en Comunidad',
+    description:
+      'Consejos de salud preventiva con invitados del centro de salud local.',
+    host: 'Dra. Patricia Lozano',
+    schedule: 'Jue 9:00-10:00 AM',
+    sponsor: 'Droguería Central',
+    genre: 'Salud',
   },
   {
     id: '8',
-    name: 'Ítem Ocho',
-    description: 'Descripción detallada del octavo ítem. Adapta este campo a tu dominio.',
+    name: 'Noche de Vallenato',
+    description:
+      'Lo mejor del vallenato clásico y nuevo, con dedicatorias de los oyentes.',
+    host: 'Luis Alberto Díaz',
+    schedule: 'Sáb 8:00-10:00 PM',
+    sponsor: 'Licorera La Esquina',
+    genre: 'Música',
   },
 ];
