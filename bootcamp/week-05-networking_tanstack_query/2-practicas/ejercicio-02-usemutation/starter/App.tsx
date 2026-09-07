@@ -1,6 +1,5 @@
 // ejercicio-02-usemutation/starter/App.tsx
 // Ejercicio guiado: crear y eliminar posts con useMutation.
-// Descomenta cada sección siguiendo los pasos del README.
 
 import React, { useState } from 'react';
 import {
@@ -17,17 +16,16 @@ import {
 // ============================================================
 // PASO 1: Imports y QueryClient
 // ============================================================
-// Descomenta:
-// import {
-//   QueryClient,
-//   QueryClientProvider,
-//   useMutation,
-//   useQuery,
-//   useQueryClient,
-// } from '@tanstack/react-query';
-// import axios from 'axios';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import axios from 'axios';
 
-// const queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
 // ============================================================
 // TIPOS
@@ -42,13 +40,12 @@ interface Post {
 // ============================================================
 // PASO 1: queryFn para listar posts
 // ============================================================
-// Descomenta:
-// async function fetchPosts(): Promise<Post[]> {
-//   const { data } = await axios.get<Post[]>(
-//     'https://jsonplaceholder.typicode.com/posts?_limit=10'
-//   );
-//   return data;
-// }
+async function fetchPosts(): Promise<Post[]> {
+  const { data } = await axios.get<Post[]>(
+    'https://jsonplaceholder.typicode.com/posts?_limit=10'
+  );
+  return data;
+}
 
 // ============================================================
 // COMPONENTE: PostCard
@@ -67,17 +64,16 @@ function PostCard({ post, onDelete, isDeleting }: PostCardProps): React.JSX.Elem
         {/* PASO 3: Botón de eliminar */}
         <Pressable
           onPress={onDelete}
-          // PASO 4: Descomenta para deshabilitar durante la mutación:
-          // disabled={isDeleting}
+          // PASO 4: deshabilitar durante la mutación
+          disabled={isDeleting}
           style={({ pressed }) => [
             styles.deleteButton,
             pressed && { opacity: 0.6 },
-            // PASO 4: Descomenta: isDeleting && { opacity: 0.4 },
+            isDeleting && { opacity: 0.4 },
           ]}
         >
           <Text style={styles.deleteButtonText}>
-            {/* PASO 4: Descomenta: {isDeleting ? '...' : '✕'} */}
-            ✕
+            {isDeleting ? '...' : '✕'}
           </Text>
         </Pressable>
       </View>
@@ -94,55 +90,46 @@ function PostCard({ post, onDelete, isDeleting }: PostCardProps): React.JSX.Elem
 function PostsScreen(): React.JSX.Element {
   const [newTitle, setNewTitle] = useState('');
 
-  // PASO 1: Reemplaza el placeholder con useQuery
-  // ──────────────────────────────────────────────
-  const isLoading = false;
-  const isFetching = false;
-  const isError = false;
-  const data: Post[] | undefined = undefined;
-  const refetch = (): void => {};
-
-  // Descomenta para PASO 1 (elimina el bloque placeholder de arriba):
-  // const { data, isLoading, isFetching, isError, refetch } = useQuery<Post[]>({
-  //   queryKey: ['posts'],
-  //   queryFn: fetchPosts,
-  // });
+  // PASO 1: useQuery para listar posts
+  // ──────────────────────────────────
+  const { data, isLoading, isFetching, isError, refetch } = useQuery<Post[]>({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  });
 
   // PASO 2: useMutation para crear un post
   // ──────────────────────────────────────
-  // const queryClient = useQueryClient();  // ← necesario para invalidateQueries
-  //
-  // const { mutate: createPost, isPending: isCreating } = useMutation({
-  //   mutationFn: async (title: string) => {
-  //     const { data: created } = await axios.post<Post>(
-  //       'https://jsonplaceholder.typicode.com/posts',
-  //       { title, body: 'Contenido de prueba', userId: 1 }
-  //     );
-  //     return created;
-  //   },
-  //   onSuccess: () => {
-  //     // Invalida el caché → TanStack Query hace refetch automático
-  //     queryClient.invalidateQueries({ queryKey: ['posts'] });
-  //     setNewTitle('');  // Limpiar el input después del éxito
-  //   },
-  // });
+  const queryClient = useQueryClient(); // ← necesario para invalidateQueries
+
+  const { mutate: createPost, isPending: isCreating } = useMutation({
+    mutationFn: async (title: string) => {
+      const { data: created } = await axios.post<Post>(
+        'https://jsonplaceholder.typicode.com/posts',
+        { title, body: 'Contenido de prueba', userId: 1 }
+      );
+      return created;
+    },
+    onSuccess: () => {
+      // Invalida el caché → TanStack Query hace refetch automático
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      setNewTitle(''); // Limpiar el input después del éxito
+    },
+  });
 
   // PASO 3: useMutation para eliminar un post
   // ──────────────────────────────────────────
-  // const { mutate: deletePost, isPending: isDeleting, variables: deletingId } = useMutation({
-  //   mutationFn: async (id: number) => {
-  //     await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ['posts'] });
-  //   },
-  // });
-
-  // Placeholders para PASO 2 y 3 (eliminar cuando descomentes):
-  const isCreating = false;
-  const createPost = (_title: string): void => {};
-  const deletePost = (_id: number): void => {};
-  const deletingId: number | undefined = undefined;
+  const {
+    mutate: deletePost,
+    isPending: isDeleting,
+    variables: deletingId,
+  } = useMutation({
+    mutationFn: async (id: number) => {
+      await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
 
   // ── Render condicional ────────────────────────────────────
   if (isLoading) {
@@ -166,7 +153,7 @@ function PostsScreen(): React.JSX.Element {
     <PostCard
       post={item}
       onDelete={() => deletePost(item.id)}
-      isDeleting={deletingId === item.id}
+      isDeleting={isDeleting && deletingId === item.id}
     />
   );
 
@@ -187,35 +174,28 @@ function PostsScreen(): React.JSX.Element {
           style={({ pressed }) => [
             styles.createButton,
             pressed && { opacity: 0.8 },
-            // PASO 4: Descomenta: isCreating && styles.createButtonDisabled,
+            isCreating && styles.createButtonDisabled,
           ]}
           onPress={() => {
             if (newTitle.trim()) createPost(newTitle.trim());
           }}
-          // PASO 4: Descomenta: disabled={isCreating || !newTitle.trim()}
+          disabled={isCreating || !newTitle.trim()}
         >
           <Text style={styles.createButtonText}>
-            {/* PASO 4: Descomenta: {isCreating ? 'Creando...' : 'Crear post'} */}
-            Crear post
+            {isCreating ? 'Creando...' : 'Crear post'}
           </Text>
         </Pressable>
       </View>
 
-      {!data ? (
-        <View style={styles.centered}>
-          <Text style={styles.hint}>Descomenta PASO 1 para ver los posts</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={data}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={renderItem}
-          contentContainerStyle={styles.list}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          onRefresh={refetch}
-          refreshing={isFetching && !isLoading}
-        />
-      )}
+      <FlatList
+        data={data ?? []}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={renderItem}
+        contentContainerStyle={styles.list}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        onRefresh={refetch}
+        refreshing={isFetching && !isLoading}
+      />
     </View>
   );
 }
@@ -226,13 +206,11 @@ function PostsScreen(): React.JSX.Element {
 
 export default function App(): React.JSX.Element {
   // PASO 1: Envuelve con QueryClientProvider
-  // return (
-  //   <QueryClientProvider client={queryClient}>
-  //     <PostsScreen />
-  //   </QueryClientProvider>
-  // );
-
-  return <PostsScreen />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <PostsScreen />
+    </QueryClientProvider>
+  );
 }
 
 // ============================================================

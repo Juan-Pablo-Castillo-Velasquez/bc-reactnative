@@ -1,39 +1,23 @@
 // src/types/index.ts
-// Interfaces del dominio del proyecto.
-// TODO: adaptar los campos a tu dominio asignado.
-
-// ============================================================
-// MODELO PRINCIPAL — Item
-// ============================================================
-// Este es el modelo genérico del recurso de tu dominio.
-// Reemplaza o extiende esta interfaz con los campos reales de tu API.
+// Modelo de dominio del proyecto: Radio Comunitaria.
 //
-// Ejemplos por dominio:
-//   Biblioteca  → Book:   { id, title, author, year, isbn }
-//   Farmacia    → Product:{ id, name, price, stock, category }
-//   Restaurante → Dish:   { id, name, price, category, spiceLevel }
-//   Cine        → Movie:  { id, title, director, duration, genre }
+// La API de práctica (JSONPlaceholder /posts) no expone campos de radio,
+// así que el hook useItems() mapea su forma (title, body) a este modelo
+// (name, description). Cuando el backend real de bc-expressjs (/programs)
+// esté disponible, este modelo puede extenderse con host, schedule,
+// sponsor y genre — los mismos campos ya usados en las semanas 03 y 04.
 
 export interface Item {
-  id: string | number;
-  // TODO: renombra este campo según tu dominio (title, name, etc.)
+  id: number;
+  // Nombre del programa radial
   name: string;
-  // TODO: agrega campos específicos de tu dominio
-  // Ejemplo (Biblioteca):
-  //   author: string;
-  //   year: number;
-  //   isbn?: string;
-  // Ejemplo (Farmacia):
-  //   price: number;
-  //   stock: number;
-  //   prescription: boolean;
-  description?: string;
+  // Descripción del programa
+  description: string;
 }
 
 // ============================================================
 // PAYLOAD DE CREACIÓN
 // ============================================================
-// Lo que se envía en el POST para crear un nuevo ítem.
-// Generalmente es el modelo sin el campo `id` (lo asigna el servidor).
+// Lo que se envía al crear un nuevo programa. El servidor asigna el id.
 
 export type CreateItemPayload = Omit<Item, 'id'>;

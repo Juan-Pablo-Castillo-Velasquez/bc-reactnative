@@ -1,20 +1,21 @@
 // src/services/api.ts
 // Instancia Axios centralizada para el proyecto.
-// TODO: configurar la baseURL de tu API real.
+//
+// Dominio: Radio Comunitaria. Mientras el backend propio (bc-expressjs,
+// endpoint /programs) no esté desplegado y accesible desde el simulador,
+// se usa JSONPlaceholder como API de práctica para los endpoints de red.
 
 import axios from 'axios';
 
 // ============================================================
 // BASE URL
 // ============================================================
-// TODO: reemplaza esta URL por la de tu API del dominio.
-// Opciones rápidas para practicar:
-//   - JSONPlaceholder: https://jsonplaceholder.typicode.com  (solo /posts, /users, etc.)
-//   - MockAPI: https://mockapi.io  (crea tu propio endpoint con los campos de tu dominio)
-//   - json-server: instala localmente y corre con `pnpm dlx json-server db.json`
-
 // Expo expone variables de entorno con prefijo EXPO_PUBLIC_
-// ej. en .env.local: EXPO_PUBLIC_API_URL=https://tu-api.com
+// ej. en .env.local: EXPO_PUBLIC_API_URL=https://tu-api-bc-expressjs.com
+//
+// Cuando el backend de bc-expressjs esté desplegado, basta con definir
+// EXPO_PUBLIC_API_URL para apuntar la app a los endpoints reales de
+// /programs sin tocar el resto del código.
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL ?? 'https://jsonplaceholder.typicode.com';
 
