@@ -1,5 +1,5 @@
 // src/screens/HomeScreen.tsx
-// Lista de ítems con soporte offline (caché AsyncStorage) y
+// Lista de programas con soporte offline (caché AsyncStorage) y
 // respeto de las preferencias del usuario (orden, modo compacto).
 // Esta pantalla está COMPLETAMENTE IMPLEMENTADA — es el punto de partida.
 
@@ -33,11 +33,11 @@ function ItemRow({ item, compact }: ItemRowProps): React.JSX.Element {
       </View>
       <View style={styles.rowContent}>
         <Text style={styles.rowTitle} numberOfLines={compact ? 1 : 2}>
-          {item.title}
+          {item.name}
         </Text>
         {!compact && (
           <Text style={styles.rowBody} numberOfLines={2}>
-            {item.body}
+            {item.description}
           </Text>
         )}
       </View>
@@ -56,8 +56,8 @@ export function HomeScreen({ navigation }: HomeScreenProps): React.JSX.Element {
     if (!data?.items) return [];
     return [...data.items].sort((a, b) =>
       sortOrder === 'asc'
-        ? a.title.localeCompare(b.title)
-        : b.title.localeCompare(a.title),
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name),
     );
   }, [data?.items, sortOrder]);
 
@@ -109,14 +109,14 @@ export function HomeScreen({ navigation }: HomeScreenProps): React.JSX.Element {
         ListHeaderComponent={
           <View style={styles.listHeader}>
             <Text style={styles.listHeaderText}>
-              {sortedItems.length} ítems · Orden: {sortOrder === 'asc' ? 'A→Z' : 'Z→A'}
+              {sortedItems.length} programas · Orden: {sortOrder === 'asc' ? 'A→Z' : 'Z→A'}
               {compactMode ? ' · Compacto' : ''}
             </Text>
           </View>
         }
         ListEmptyComponent={
           <View style={styles.centered}>
-            <Text style={TYPOGRAPHY.body}>No hay ítems</Text>
+            <Text style={TYPOGRAPHY.body}>No hay programas</Text>
           </View>
         }
       />

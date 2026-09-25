@@ -1,22 +1,21 @@
 // src/schemas/itemSchema.ts
-// Schema Zod para validar el formulario de creación/edición.
-// TODO: adaptar los campos a tu dominio asignado.
+// Schema Zod para validar el formulario de creación (dominio Radio Comunitaria).
 
 import { z } from 'zod';
 
 export const itemSchema = z.object({
-  title: z
-    .string({ required_error: 'El nombre es requerido' })
+  // NOTA: Zod 4 elimina el parámetro `required_error` de v3 (Object
+  // literal may only specify 'error'/'message') — la validación de
+  // "requerido" se cubre con `.min(1, ...)`.
+  name: z
+    .string()
     .min(1, 'El nombre no puede estar vacío')
     .max(80, 'Máximo 80 caracteres'),
-  body: z
+  description: z
     .string()
     .max(500, 'Máximo 500 caracteres')
     .optional()
     .or(z.literal('')),
-  // TODO: agrega campos de tu dominio
-  // Ejemplo (Farmacia): price: z.coerce.number().positive('Precio inválido')
-  // Ejemplo (Gimnasio): capacity: z.coerce.number().int().min(1)
 });
 
 // El tipo se infiere del schema — no duplicar con interface manual

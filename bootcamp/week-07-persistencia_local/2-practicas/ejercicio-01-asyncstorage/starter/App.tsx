@@ -75,91 +75,91 @@ export default function App(): React.JSX.Element {
   // PASO 1: Guardar y recuperar un string (tema)
   // ─────────────────────────────────────────────
   // 1a. Recuperar tema guardado al iniciar
-  // useEffect(() => {
-  //   AsyncStorage.getItem(KEYS.THEME).then((stored) => {
-  //     if (stored === 'dark' || stored === 'light') {
-  //       setTheme(stored);
-  //       addLog(`Tema recuperado del storage: ${stored}`);
-  //     } else {
-  //       addLog('Sin tema guardado — usando default: dark');
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    AsyncStorage.getItem(KEYS.THEME).then((stored) => {
+      if (stored === 'dark' || stored === 'light') {
+        setTheme(stored);
+        addLog(`Tema recuperado del storage: ${stored}`);
+      } else {
+        addLog('Sin tema guardado — usando default: dark');
+      }
+    });
+  }, []);
 
   // 1b. Guardar cuando cambia el switch
-  // async function handleThemeChange(value: boolean): Promise<void> {
-  //   const newTheme: 'dark' | 'light' = value ? 'dark' : 'light';
-  //   setTheme(newTheme);
-  //   await AsyncStorage.setItem(KEYS.THEME, newTheme);
-  //   addLog(`Tema guardado: ${newTheme}`);
-  // }
+  async function handleThemeChange(value: boolean): Promise<void> {
+    const newTheme: 'dark' | 'light' = value ? 'dark' : 'light';
+    setTheme(newTheme);
+    await AsyncStorage.setItem(KEYS.THEME, newTheme);
+    addLog(`Tema guardado: ${newTheme}`);
+  }
 
   // ─────────────────────────────────────────────
   // PASO 2: Guardar y recuperar un objeto (perfil)
   // ─────────────────────────────────────────────
   // 2a. Recuperar perfil al iniciar
-  // useEffect(() => {
-  //   AsyncStorage.getItem(KEYS.PROFILE).then((raw) => {
-  //     if (raw) {
-  //       setProfile(JSON.parse(raw) as UserProfile);
-  //       addLog('Perfil recuperado del storage');
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    AsyncStorage.getItem(KEYS.PROFILE).then((raw) => {
+      if (raw) {
+        setProfile(JSON.parse(raw) as UserProfile);
+        addLog('Perfil recuperado del storage');
+      }
+    });
+  }, []);
 
   // 2b. Guardar perfil mockeado
-  // async function handleSaveProfile(): Promise<void> {
-  //   await AsyncStorage.setItem(KEYS.PROFILE, JSON.stringify(MOCK_PROFILE));
-  //   setProfile(MOCK_PROFILE);
-  //   addLog('Perfil guardado con JSON.stringify');
-  // }
+  async function handleSaveProfile(): Promise<void> {
+    await AsyncStorage.setItem(KEYS.PROFILE, JSON.stringify(MOCK_PROFILE));
+    setProfile(MOCK_PROFILE);
+    addLog('Perfil guardado con JSON.stringify');
+  }
 
   // ─────────────────────────────────────────────
   // PASO 3: Persistir lista (caché offline)
   // ─────────────────────────────────────────────
-  // useEffect(() => {
-  //   async function loadItems(): Promise<void> {
-  //     setIsLoading(true);
-  //     try {
-  //       // Primero intentar red (aquí usamos mock, pero podría ser una llamada axios)
-  //       // Simula error de red descomentando la línea siguiente:
-  //       // throw new Error('Sin red');
-  //
-  //       const data = MOCK_ITEMS;
-  //       setItems(data);
-  //       await AsyncStorage.setItem(KEYS.ITEMS_CACHE, JSON.stringify(data));
-  //       addLog('Ítems obtenidos de la "red" y cacheados');
-  //     } catch {
-  //       // Sin red: intentar el cache
-  //       const cached = await AsyncStorage.getItem(KEYS.ITEMS_CACHE);
-  //       if (cached) {
-  //         setItems(JSON.parse(cached) as Item[]);
-  //         addLog('⚠️ Sin red — mostrando datos del cache');
-  //       } else {
-  //         addLog('❌ Sin red y sin cache');
-  //       }
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   }
-  //   loadItems();
-  // }, []);
+  useEffect(() => {
+    async function loadItems(): Promise<void> {
+      setIsLoading(true);
+      try {
+        // Primero intentar red (aquí usamos mock, pero podría ser una llamada axios)
+        // Simula error de red descomentando la línea siguiente:
+        // throw new Error('Sin red');
+
+        const data = MOCK_ITEMS;
+        setItems(data);
+        await AsyncStorage.setItem(KEYS.ITEMS_CACHE, JSON.stringify(data));
+        addLog('Ítems obtenidos de la "red" y cacheados');
+      } catch {
+        // Sin red: intentar el cache
+        const cached = await AsyncStorage.getItem(KEYS.ITEMS_CACHE);
+        if (cached) {
+          setItems(JSON.parse(cached) as Item[]);
+          addLog('⚠️ Sin red — mostrando datos del cache');
+        } else {
+          addLog('❌ Sin red y sin cache');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadItems();
+  }, []);
 
   // ─────────────────────────────────────────────
   // PASO 4: Eliminar datos
   // ─────────────────────────────────────────────
-  // async function handleClearPreferences(): Promise<void> {
-  //   await AsyncStorage.multiRemove([KEYS.THEME, KEYS.PROFILE]);
-  //   setTheme('dark');
-  //   setProfile(null);
-  //   addLog('Preferencias eliminadas');
-  // }
+  async function handleClearPreferences(): Promise<void> {
+    await AsyncStorage.multiRemove([KEYS.THEME, KEYS.PROFILE]);
+    setTheme('dark');
+    setProfile(null);
+    addLog('Preferencias eliminadas');
+  }
 
-  // async function handleClearCache(): Promise<void> {
-  //   await AsyncStorage.removeItem(KEYS.ITEMS_CACHE);
-  //   setItems([]);
-  //   addLog('Caché de ítems eliminada');
-  // }
+  async function handleClearCache(): Promise<void> {
+    await AsyncStorage.removeItem(KEYS.ITEMS_CACHE);
+    setItems([]);
+    addLog('Caché de ítems eliminada');
+  }
 
   const bg = theme === 'dark' ? '#0f172a' : '#f8fafc';
   const fg = theme === 'dark' ? '#f8fafc' : '#0f172a';
@@ -174,9 +174,7 @@ export default function App(): React.JSX.Element {
         <View style={[styles.card, { backgroundColor: card }]}>
           <Text style={[styles.sectionTitle, { color: fg }]}>PASO 1 — Tema persistente</Text>
           <Text style={[styles.hint, { color: fg }]}>Modo oscuro:</Text>
-          {/* Descomenta el Switch al implementar el PASO 1 */}
-          {/* <Switch value={theme === 'dark'} onValueChange={handleThemeChange} /> */}
-          <Switch value={theme === 'dark'} disabled />
+          <Switch value={theme === 'dark'} onValueChange={handleThemeChange} />
           <Text style={[styles.status, { color: fg }]}>Tema actual: {theme}</Text>
         </View>
 
@@ -192,11 +190,7 @@ export default function App(): React.JSX.Element {
             )
             : <Text style={[styles.hint, { color: fg }]}>Sin perfil guardado</Text>
           }
-          {/* Descomenta al implementar PASO 2 */}
-          {/* <Pressable style={styles.btn} onPress={handleSaveProfile}>
-            <Text style={styles.btnText}>Guardar Perfil</Text>
-          </Pressable> */}
-          <Pressable style={[styles.btn, styles.btnDisabled]} disabled>
+          <Pressable style={styles.btn} onPress={handleSaveProfile}>
             <Text style={styles.btnText}>Guardar Perfil</Text>
           </Pressable>
         </View>
@@ -224,15 +218,11 @@ export default function App(): React.JSX.Element {
         {/* PASO 4 — Limpiar */}
         <View style={[styles.card, { backgroundColor: card }]}>
           <Text style={[styles.sectionTitle, { color: fg }]}>PASO 4 — Eliminar datos</Text>
-          {/* Descomenta al implementar PASO 4 */}
-          {/* <Pressable style={[styles.btn, styles.btnDanger]} onPress={handleClearPreferences}>
+          <Pressable style={[styles.btn, styles.btnDanger]} onPress={handleClearPreferences}>
             <Text style={styles.btnText}>Limpiar preferencias</Text>
           </Pressable>
           <Pressable style={[styles.btn, styles.btnDanger]} onPress={handleClearCache}>
             <Text style={styles.btnText}>Limpiar caché</Text>
-          </Pressable> */}
-          <Pressable style={[styles.btn, styles.btnDanger, styles.btnDisabled]} disabled>
-            <Text style={styles.btnText}>Limpiar preferencias</Text>
           </Pressable>
         </View>
 

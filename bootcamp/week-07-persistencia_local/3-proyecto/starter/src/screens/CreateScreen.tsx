@@ -1,5 +1,5 @@
 // src/screens/CreateScreen.tsx
-// Formulario para crear un nuevo ítem.
+// Formulario para crear un nuevo programa (dominio Radio Comunitaria).
 // Reutilizado de semana 06 — ya implementado con RHF + Zod.
 
 import React from 'react';
@@ -35,14 +35,14 @@ export function CreateScreen(): React.JSX.Element {
     formState: { errors, isSubmitting },
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
-    defaultValues: { title: '', body: '' },
+    defaultValues: { name: '', description: '' },
   });
 
   const { mutate: createItem, isPending } = useCreateItem();
 
   function onSubmit(data: ItemFormData): void {
     createItem(
-      { title: data.title, body: data.body ?? '', userId: 1 },
+      { name: data.name, description: data.description ?? '' },
       { onSuccess: () => navigation.goBack() },
     );
   }
@@ -60,30 +60,28 @@ export function CreateScreen(): React.JSX.Element {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.hint}>
-          Adapta los campos a tu dominio asignado.
+          Nuevo programa de la Radio Comunitaria.
         </Text>
 
         <FormField
           control={control}
-          name="title"
+          name="name"
           label="Nombre *"
-          placeholder="Nombre del ítem…"
+          placeholder="Nombre del programa…"
           returnKeyType="next"
-          errorMessage={errors.title?.message}
+          errorMessage={errors.name?.message}
         />
 
         <FormField
           control={control}
-          name="body"
+          name="description"
           label="Descripción"
           placeholder="Descripción opcional…"
           multiline
           numberOfLines={4}
           textAlignVertical="top"
-          errorMessage={errors.body?.message}
+          errorMessage={errors.description?.message}
         />
-
-        {/* TODO: agrega campos adicionales de tu dominio */}
 
         <View style={styles.actions}>
           <Pressable
@@ -93,7 +91,7 @@ export function CreateScreen(): React.JSX.Element {
           >
             {isSubmitting || isPending
               ? <ActivityIndicator size="small" color={COLORS.background} />
-              : <Text style={styles.buttonText}>Crear ítem</Text>
+              : <Text style={styles.buttonText}>Crear programa</Text>
             }
           </Pressable>
 

@@ -1,10 +1,7 @@
 // src/screens/SettingsScreen.tsx
 // Pantalla de ajustes con preferencias persistidas en MMKV
-// y un dato sensible persistido con Expo SecureStore.
-//
-// Esta es la pantalla CLAVE de la semana 07.
-// El estudiante debe implementar los TODOs para hacer funcionar
-// la persistencia real en lugar de los valores hardcodeados.
+// y un dato sensible persistido con Expo SecureStore
+// (dominio Radio Comunitaria: código de acceso de la cabina de transmisión).
 
 import React, { useState } from 'react';
 import {
@@ -18,18 +15,17 @@ import {
   View,
 } from 'react-native';
 
-// TODO semana 07: importar SecureStore
-// import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store';
 
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../theme';
 import { usePreferences } from '../hooks/usePreferences';
 
 // ============================================================
-// Clave para el dato sensible de ejemplo (SecureStore)
-// Adaptar a tu dominio: 'USER_PIN', 'API_KEY', 'ACCESS_CODE'…
+// Clave para el dato sensible: código de acceso a la cabina de
+// transmisión de la Radio Comunitaria.
 // ============================================================
-const SENSITIVE_KEY = 'demo_sensitive_value';
-const MOCK_SENSITIVE = 'SuPeRsEcReT-2025';
+const SENSITIVE_KEY = 'radio_booth_access_code';
+const MOCK_SENSITIVE = 'CABINA-2025-XT7';
 
 export function SettingsScreen(): React.JSX.Element {
   const {
@@ -49,55 +45,33 @@ export function SettingsScreen(): React.JSX.Element {
   // Función para guardar el dato sensible con SecureStore
   // ============================================================
   async function handleSaveSensitive(): Promise<void> {
-    // TODO: reemplaza el alert con SecureStore.setItemAsync
-    //
-    // await SecureStore.setItemAsync(SENSITIVE_KEY, MOCK_SENSITIVE);
-
-    Alert.alert(
-      '⚠️ Pendiente',
-      'Implementa SecureStore.setItemAsync para guardar el dato sensible.',
-    );
-
-    // Una vez implementado, descomenta:
-    // setIsSaved(true);
+    await SecureStore.setItemAsync(SENSITIVE_KEY, MOCK_SENSITIVE);
+    setIsSaved(true);
+    Alert.alert('Guardado', 'Código de acceso guardado de forma cifrada.');
   }
 
   // ============================================================
   // Función para leer el dato sensible desde SecureStore
   // ============================================================
   async function handleReadSensitive(): Promise<void> {
-    // TODO: reemplaza con SecureStore.getItemAsync
-    //
-    // const value = await SecureStore.getItemAsync(SENSITIVE_KEY);
-    // if (value) {
-    //   // Mostrar solo primeros/últimos caracteres (nunca el valor completo en UI)
-    //   const masked = value.slice(0, 3) + '•••' + value.slice(-3);
-    //   setMaskedValue(masked);
-    // } else {
-    //   Alert.alert('No encontrado', 'No hay dato sensible guardado aún.');
-    // }
-
-    Alert.alert(
-      '⚠️ Pendiente',
-      'Implementa SecureStore.getItemAsync para leer el dato sensible.',
-    );
+    const value = await SecureStore.getItemAsync(SENSITIVE_KEY);
+    if (value) {
+      // Mostrar solo primeros/últimos caracteres (nunca el valor completo en UI)
+      const masked = value.slice(0, 3) + '•••' + value.slice(-3);
+      setMaskedValue(masked);
+    } else {
+      Alert.alert('No encontrado', 'No hay dato sensible guardado aún.');
+    }
   }
 
   // ============================================================
   // Función para eliminar el dato sensible de SecureStore
   // ============================================================
   async function handleDeleteSensitive(): Promise<void> {
-    // TODO: reemplaza con SecureStore.deleteItemAsync
-    //
-    // await SecureStore.deleteItemAsync(SENSITIVE_KEY);
-    // setIsSaved(false);
-    // setMaskedValue(null);
-    // Alert.alert('Eliminado', 'El dato sensible fue removido de SecureStore.');
-
-    Alert.alert(
-      '⚠️ Pendiente',
-      'Implementa SecureStore.deleteItemAsync para eliminar el dato sensible.',
-    );
+    await SecureStore.deleteItemAsync(SENSITIVE_KEY);
+    setIsSaved(false);
+    setMaskedValue(null);
+    Alert.alert('Eliminado', 'El código de acceso fue removido de SecureStore.');
   }
 
   return (
@@ -117,13 +91,10 @@ export function SettingsScreen(): React.JSX.Element {
         <View style={styles.rowInfo}>
           <Text style={styles.rowLabel}>Modo compacto</Text>
           <Text style={styles.rowDesc}>
-            Muestra menos información por ítem en la lista
+            Muestra menos información por programa en la lista
           </Text>
         </View>
 
-        {/* TODO: este Switch ya cambia compactMode en el store.
-             Para que persista en MMKV, implementa useMMKVBoolean
-             dentro de usePreferences. */}
         <Switch
           value={compactMode}
           onValueChange={(v) => setCompactMode(v)}
@@ -157,15 +128,13 @@ export function SettingsScreen(): React.JSX.Element {
           ))}
         </View>
         <Text style={styles.rowDesc}>
-          {/* TODO: implementa useMMKVString en usePreferences para
-              que este valor persista entre sesiones. */}
           Valor actual: <Text style={styles.mono}>{sortOrder}</Text>
         </Text>
       </View>
 
       {/* Preferencia: Ítems por página */}
       <View style={[styles.row, styles.rowColumn]}>
-        <Text style={styles.rowLabel}>Ítems por página</Text>
+        <Text style={styles.rowLabel}>Programas por página</Text>
         <View style={styles.segmented}>
           {([5, 10, 20] as const).map((n) => (
             <Pressable
@@ -188,14 +157,12 @@ export function SettingsScreen(): React.JSX.Element {
           ))}
         </View>
         <Text style={styles.rowDesc}>
-          {/* TODO: implementa useMMKVNumber en usePreferences para
-              que este valor también persista. */}
           Valor actual: <Text style={styles.mono}>{itemsPerPage}</Text>
         </Text>
       </View>
 
       {/* ──────────────────────────────────────────────────────
-          SECCIÓN SecureStore — Dato sensible de demostración
+          SECCIÓN SecureStore — Código de acceso de cabina
       ────────────────────────────────────────────────────── */}
       <Text style={[styles.sectionTitle, { marginTop: SPACING.xl }]}>
         Datos sensibles (SecureStore)
@@ -206,7 +173,7 @@ export function SettingsScreen(): React.JSX.Element {
       </Text>
 
       <Text style={styles.rowDesc}>
-        Dato de ejemplo: <Text style={styles.mono}>{SENSITIVE_KEY}</Text>
+        Código de acceso a la cabina de transmisión{isSaved ? ' — guardado' : ''}
       </Text>
 
       {maskedValue && (
@@ -232,7 +199,7 @@ export function SettingsScreen(): React.JSX.Element {
           style={[styles.btnSecure, styles.btnDanger]}
           onPress={handleDeleteSensitive}
         >
-          <Text style={[styles.btnSecureText, { color: COLORS.error }]}>
+          <Text style={[styles.btnSecureText, { color: COLORS.danger }]}>
             🗑️ Eliminar
           </Text>
         </Pressable>
@@ -254,7 +221,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   content: { padding: SPACING.lg, paddingBottom: SPACING.xxl, gap: SPACING.sm },
 
-  sectionTitle: { ...TYPOGRAPHY.subtitle, marginBottom: SPACING.xs },
+  sectionTitle: { ...TYPOGRAPHY.title, marginBottom: SPACING.xs },
   sectionHint: { ...TYPOGRAPHY.caption, marginBottom: SPACING.md, fontStyle: 'italic' },
 
   row: {
@@ -275,7 +242,7 @@ const styles = StyleSheet.create({
   segment: {
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: RADIUS.xs,
+    borderRadius: RADIUS.sm,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs,
   },
@@ -312,7 +279,7 @@ const styles = StyleSheet.create({
   btnDanger: {
     backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: COLORS.error,
+    borderColor: COLORS.danger,
   },
   btnSecureText: { ...TYPOGRAPHY.caption, fontWeight: '700', color: COLORS.background },
 
@@ -320,7 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderLeftWidth: 3,
     borderLeftColor: COLORS.accent,
-    borderRadius: RADIUS.xs,
+    borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginTop: SPACING.md,
   },
