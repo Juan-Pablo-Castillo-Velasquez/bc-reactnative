@@ -10,31 +10,23 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 import { theme } from '../theme';
+import type { Item } from '../types';
 
 // ============================================
-// ADAPTA ESTA PANTALLA A TU DOMINIO
+// DOMINIO: Radio Comunitaria
 // ============================================
-// Ejemplos de qué mostrar aquí:
-// - Biblioteca: lista de libros disponibles
-// - Farmacia: catálogo de medicamentos
-// - Gimnasio: clases disponibles de la semana
-// - Restaurante: menú del día
-// - Hotel: habitaciones disponibles
+// Esta pantalla muestra el listado de programas de la radio.
+// Se reutiliza dummyjson.com/posts (title/body) mapeado a
+// name/description, siguiendo el mismo modelo Item{id,name,description}
+// usado en las semanas 05-07 para "Programas".
 
-// TODO: Cambia el tipo Item para que represente entidades de tu dominio
-interface Item {
+interface DummyPost {
   id: number;
   title: string;
-  // Agrega campos relevantes a tu dominio
-  // Ejemplo (Biblioteca): author: string; available: boolean
-  // Ejemplo (Gymansio): time: string; instructor: string; capacity: number
-  [key: string]: unknown;
+  body: string;
 }
 
-// TODO: Cambia la URL por el endpoint relevante a tu dominio
-// dummyjson.com tiene muchos recursos disponibles:
-// /products, /recipes, /todos, /posts, /quotes, /users, etc.
-const ITEMS_URL = 'https://dummyjson.com/products?limit=20';
+const ITEMS_URL = 'https://dummyjson.com/posts?limit=20';
 
 export function HomeScreen(): React.JSX.Element {
   const user = useAuthStore((state) => state.user);
@@ -42,8 +34,14 @@ export function HomeScreen(): React.JSX.Element {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['home-items'],
     queryFn: async () => {
-      const response = await axios.get<{ products: Item[] }>(ITEMS_URL);
-      return response.data.products;
+      const response = await axios.get<{ posts: DummyPost[] }>(ITEMS_URL);
+      return response.data.posts.map(
+        (post): Item => ({
+          id: post.id,
+          name: post.title,
+          description: post.body,
+        }),
+      );
     },
   });
 
@@ -65,13 +63,12 @@ export function HomeScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {/* Saludo personalizado — adapta al dominio */}
+      {/* Saludo personalizado */}
       <View style={styles.header}>
         <Text style={styles.greeting}>
           Hola, {user?.firstName ?? user?.username} 👋
         </Text>
-        {/* TODO: Cambia el subtítulo según tu dominio */}
-        <Text style={styles.subtitle}>Aquí está el contenido de tu dominio</Text>
+        <Text style={styles.subtitle}>Programas de la Radio Comunitaria</Text>
       </View>
 
       <FlatList
@@ -80,13 +77,14 @@ export function HomeScreen(): React.JSX.Element {
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            {/* TODO: Adapta el renderizado a los campos de tu dominio */}
-            <Text style={styles.itemTitle}>{String(item.title)}</Text>
-            <Text style={styles.itemSubtitle}>ID: {item.id}</Text>
+            <Text style={styles.itemTitle}>{item.name}</Text>
+            <Text style={styles.itemSubtitle} numberOfLines={2}>
+              {item.description}
+            </Text>
           </View>
         )}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No hay elementos para mostrar</Text>
+          <Text style={styles.emptyText}>No hay programas para mostrar</Text>
         }
       />
     </View>

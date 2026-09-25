@@ -1,5 +1,5 @@
 // ============================================
-// TIPOS GLOBALES — week-08 Autenticación
+// TIPOS GLOBALES — week-08 Autenticación (dominio Radio Comunitaria)
 // ============================================
 
 /** Tokens recibidos del server al autenticarse */
@@ -16,10 +16,6 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   image?: string;
-  // TODO: Agrega propiedades específicas de tu dominio
-  // Ejemplo (Biblioteca): borrowedBooksCount?: number
-  // Ejemplo (Gimnasio): membershipType?: 'basic' | 'premium'
-  // Ejemplo (Farmacia): accountBalance?: number
 }
 
 /** Payload decodificado del JWT */
@@ -53,4 +49,11 @@ export interface AuthResponse extends AuthTokens {
   firstName: string;
   lastName: string;
   image: string;
+}
+
+/** Programa de la Radio Comunitaria mostrado en HomeScreen */
+export interface Item {
+  id: number;
+  name: string;
+  description: string;
 }

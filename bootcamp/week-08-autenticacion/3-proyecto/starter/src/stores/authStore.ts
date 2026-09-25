@@ -4,8 +4,9 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import type { AuthUser, LoginCredentials, RegisterData } from '../types';
-import { saveTokens, clearTokens, getAccessToken, getRefreshToken } from '../services/tokenService';
+import { saveTokens, clearTokens, getRefreshToken } from '../services/tokenService';
 import * as authService from '../services/authService';
 
 interface AuthState {
@@ -28,6 +29,31 @@ interface AuthState {
   clearError: () => void;
 }
 
+function toAuthUser(response: {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  image?: string;
+}): AuthUser {
+  return {
+    id: response.id,
+    username: response.username,
+    email: response.email,
+    firstName: response.firstName,
+    lastName: response.lastName,
+    image: response.image,
+  };
+}
+
+function errorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    return err.response?.data?.message ?? 'Error de red';
+  }
+  return 'Error inesperado';
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -39,71 +65,66 @@ export const useAuthStore = create<AuthState>()(
 
       // ─── login ─────────────────────────────────────────
       login: async (credentials: LoginCredentials) => {
-        /**
-         * TODO: Implementar la acción login.
-         *
-         * Pasos:
-         * 1. set({ isLoading: true, error: null })
-         * 2. Llamar a authService.login(credentials)
-         * 3. Guardar tokens con saveTokens({ accessToken, refreshToken })
-         * 4. Actualizar el estado: set({ user, isAuthenticated: true, isLoading: false })
-         *    - user: extraer del response (id, username, email, firstName, lastName, image)
-         * 5. En catch: set({ error: mensaje, isLoading: false })
-         *
-         * Pista:
-         * set({ isLoading: true, error: null });
-         * try {
-         *   const response = await authService.login(credentials);
-         *   await saveTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken });
-         *   set({
-         *     user: { id: response.id, username: response.username, ... },
-         *     isAuthenticated: true,
-         *     isLoading: false,
-         *   });
-         * } catch (err) {
-         *   const message = axios.isAxiosError(err) ? err.response?.data?.message ?? 'Error' : 'Error';
-         *   set({ error: message, isLoading: false });
-         *   throw err; // para que el formulario pueda capturarlo
-         * }
-         */
-        throw new Error('login() no implementado aún — ver TODOs en authStore.ts');
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authService.login(credentials);
+          await saveTokens({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+          });
+          set({
+            user: toAuthUser(response),
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (err) {
+          set({ error: errorMessage(err), isLoading: false });
+          throw err; // para que el formulario pueda capturarlo
+        }
       },
 
       // ─── register ──────────────────────────────────────
       register: async (data: RegisterData) => {
-        /**
-         * TODO: Implementar la acción register.
-         * Es similar a login pero llama a authService.register(data).
-         * Si el registro retorna tokens, guardarlos con saveTokens.
-         */
-        throw new Error('register() no implementado aún');
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authService.register(data);
+          await saveTokens({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+          });
+          set({
+            user: toAuthUser(response),
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (err) {
+          set({ error: errorMessage(err), isLoading: false });
+          throw err;
+        }
       },
 
       // ─── logout ────────────────────────────────────────
       logout: async () => {
-        /**
-         * TODO: Implementar la acción logout.
-         *
-         * Pasos:
-         * 1. Llamar a clearTokens() — elimina tokens de SecureStore
-         * 2. Limpiar el estado: set({ user: null, isAuthenticated: false, error: null })
-         */
-        throw new Error('logout() no implementado aún');
+        await clearTokens();
+        set({ user: null, isAuthenticated: false, error: null });
       },
 
       // ─── refreshTokens ─────────────────────────────────
       refreshTokens: async () => {
-        /**
-         * TODO: Implementar refreshTokens.
-         *
-         * Pasos:
-         * 1. Obtener el refreshToken con getRefreshToken() de tokenService
-         * 2. Si no hay refreshToken → llamar get().logout()
-         * 3. Llamar a authService.refreshTokens(refreshToken)
-         * 4. Guardar nuevos tokens con saveTokens()
-         * 5. En catch → llamar get().logout()
-         */
-        throw new Error('refreshTokens() no implementado aún');
+        const refreshToken = await getRefreshToken();
+        if (!refreshToken) {
+          await get().logout();
+          return;
+        }
+        try {
+          const response = await authService.refreshTokens(refreshToken);
+          await saveTokens({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+          });
+        } catch {
+          await get().logout();
+        }
       },
 
       // ─── clearError ────────────────────────────────────

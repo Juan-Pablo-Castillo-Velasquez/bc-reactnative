@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,95 +8,87 @@ import {
   StyleSheet,
 } from 'react-native';
 // PASO 1 y 2: descomenta las siguientes importaciones:
-// import * as WebBrowser from 'expo-web-browser';
-// import {
-//   makeRedirectUri,
-//   useAuthRequest,
-//   type AuthSessionResult,
-// } from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
+import {
+  makeRedirectUri,
+  useAuthRequest,
+  type AuthSessionResult,
+} from 'expo-auth-session';
 
 // PASO 1: Registrar el manejador de deep links para el callback de OAuth
 // Debe llamarse en el nivel superior del módulo (fuera de cualquier componente)
-// WebBrowser.maybeCompleteAuthSession();
+WebBrowser.maybeCompleteAuthSession();
 
 // ============================================
 // PASO 1: Configurar makeRedirectUri
 // ============================================
-// Descomenta la constante redirectUri:
-//
-// const redirectUri = makeRedirectUri({ scheme: 'bcauth08' });
-// console.log('Redirect URI:', redirectUri);
+const redirectUri = makeRedirectUri({ scheme: 'bcauth08' });
+console.log('Redirect URI:', redirectUri);
 // En build nativo:  "bcauth08://"
 // En Expo Go:       "exp://192.168.x.x:8081"
 
 // ============================================
 // PASO 2: Discovery document de GitHub
 // ============================================
-// Descomenta el objeto discovery:
-//
-// const discovery = {
-//   authorizationEndpoint: 'https://github.com/login/oauth/authorize',
-//   tokenEndpoint: 'https://github.com/login/oauth/access_token',
-// };
+const discovery = {
+  authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+  tokenEndpoint: 'https://github.com/login/oauth/access_token',
+};
 
 // Reemplaza con tu Client ID de GitHub OAuth App
 const GITHUB_CLIENT_ID = 'REEMPLAZA_CON_TU_CLIENT_ID';
 
 export default function App(): React.JSX.Element {
-  const [status, setStatus] = useState<string>('idle');
-  const [code, setCode] = useState<string | null>(null);
-  const [codeVerifier, setCodeVerifier] = useState<string | null>(null);
+  const [status, setStatus] = React.useState<string>('idle');
+  const [code, setCode] = React.useState<string | null>(null);
+  const [codeVerifier, setCodeVerifier] = React.useState<string | null>(null);
 
   // ============================================
   // PASO 2: Hook useAuthRequest
   // ============================================
-  // Descomenta el hook:
-  //
-  // const [request, response, promptAsync] = useAuthRequest(
-  //   {
-  //     clientId: GITHUB_CLIENT_ID,
-  //     scopes: ['read:user', 'user:email'],
-  //     redirectUri,
-  //     usePKCE: true,
-  //     // usePKCE: true es el default — expo-auth-session genera:
-  //     //   code_verifier: string aleatoria de 43-128 chars
-  //     //   code_challenge: base64url(SHA256(code_verifier))
-  //   },
-  //   discovery,
-  // );
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: GITHUB_CLIENT_ID,
+      scopes: ['read:user', 'user:email'],
+      redirectUri,
+      usePKCE: true,
+      // usePKCE: true es el default — expo-auth-session genera:
+      //   code_verifier: string aleatoria de 43-128 chars
+      //   code_challenge: base64url(SHA256(code_verifier))
+    },
+    discovery,
+  );
 
   // ============================================
   // PASO 3 y 4: Manejar la respuesta OAuth
   // ============================================
-  // Descomenta el useEffect que lee `response`:
-  //
-  // React.useEffect(() => {
-  //   if (!response) return;
-  //
-  //   // PASO 3: Éxito
-  //   if (response.type === 'success') {
-  //     const authCode = response.params.code;
-  //     setCode(authCode);
-  //     setCodeVerifier(request?.codeVerifier ?? null);
-  //     setStatus('success');
-  //     console.log('--- OAuth Success ---');
-  //     console.log('code:', authCode);
-  //     console.log('code_verifier:', request?.codeVerifier);
-  //     // ⚠️ SIGUIENTE PASO en producción:
-  //     // Enviar { code, code_verifier } a tu backend
-  //     // para que intercambie por access_token con GitHub
-  //     return;
-  //   }
-  //
-  //   // PASO 4: Cancelación o error
-  //   if (response.type === 'cancel' || response.type === 'dismiss') {
-  //     setStatus('cancelled');
-  //     return;
-  //   }
-  //   if (response.type === 'error') {
-  //     setStatus(`error: ${response.error?.message ?? 'desconocido'}`);
-  //   }
-  // }, [response]);
+  React.useEffect(() => {
+    if (!response) return;
+
+    // PASO 3: Éxito
+    if (response.type === 'success') {
+      const authCode = response.params.code;
+      setCode(authCode);
+      setCodeVerifier(request?.codeVerifier ?? null);
+      setStatus('success');
+      console.log('--- OAuth Success ---');
+      console.log('code:', authCode);
+      console.log('code_verifier:', request?.codeVerifier);
+      // ⚠️ SIGUIENTE PASO en producción:
+      // Enviar { code, code_verifier } a tu backend
+      // para que intercambie por access_token con GitHub
+      return;
+    }
+
+    // PASO 4: Cancelación o error
+    if (response.type === 'cancel' || response.type === 'dismiss') {
+      setStatus('cancelled');
+      return;
+    }
+    if (response.type === 'error') {
+      setStatus(`error: ${response.error?.message ?? 'desconocido'}`);
+    }
+  }, [response]);
 
   // ============================================
   // RENDER
@@ -117,13 +109,7 @@ export default function App(): React.JSX.Element {
       {/* Paso 1: Redirect URI */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Paso 1: Redirect URI</Text>
-        {/* Cuando descomentes makeRedirectUri, muestra la URI aquí */}
-        <Text style={styles.tokenText}>
-          {/* redirectUri ?? */ '⬆️ Descomenta los pasos en el código'}
-        </Text>
-        <Text style={styles.hint}>
-          💡 Descomenta WebBrowser.maybeCompleteAuthSession() y makeRedirectUri
-        </Text>
+        <Text style={styles.tokenText}>{redirectUri}</Text>
       </View>
 
       {/* Paso 2 y 3: Botón de login */}
@@ -133,21 +119,16 @@ export default function App(): React.JSX.Element {
           style={[
             styles.button,
             styles.buttonGitHub,
-            // request ? {} : styles.buttonDisabled,
-            styles.buttonDisabled,
+            request ? {} : styles.buttonDisabled,
           ]}
           onPress={() => {
-            // Cuando descomentes el useAuthRequest, activa esto:
-            // setStatus('loading');
-            // promptAsync();
+            setStatus('loading');
+            promptAsync();
           }}
-          // disabled={!request}
+          disabled={!request}
         >
           <Text style={styles.buttonText}>🐙 Continuar con GitHub</Text>
         </Pressable>
-        <Text style={styles.hint}>
-          💡 Descomenta useAuthRequest y promptAsync()
-        </Text>
       </View>
 
       {/* Resultado del code */}

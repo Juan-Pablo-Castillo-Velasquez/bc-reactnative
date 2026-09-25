@@ -32,19 +32,6 @@ export function ProfileScreen(): React.JSX.Element {
     );
   };
 
-  /**
-   * TODO: Mostrar datos del usuario del dominio asignado.
-   *
-   * Ejemplos de secciones que puedes agregar:
-   * - Biblioteca: "Libros prestados: 3", "Fecha de devolución: ..."
-   * - Farmacia: "Compras del mes: 5", "Saldo: $25,000"
-   * - Gimnasio: "Membresía: Premium", "Clases asistidas: 12"
-   * - Restaurante: "Pedidos realizados: 7", "Puntos de fidelidad: 350"
-   *
-   * Para mostrar datos dinámicos, usa useQuery con getProfile de authService.
-   * Los datos del usuario básico ya están en useAuthStore.user
-   */
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Avatar placeholder */}
@@ -55,20 +42,17 @@ export function ProfileScreen(): React.JSX.Element {
           </Text>
         </View>
         <Text style={styles.name}>
-          {/* TODO: Mostrar nombre completo del usuario */}
           {user ? `${user.firstName} ${user.lastName}` : 'Usuario'}
         </Text>
         <Text style={styles.email}>
-          {/* TODO: Mostrar email del usuario */}
           {user?.email ?? '—'}
         </Text>
       </View>
 
-      {/* Información del dominio */}
+      {/* Información de la cuenta — dominio Radio Comunitaria */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Información de la cuenta</Text>
 
-        {/* TODO: Agrega filas de información relevante a tu dominio */}
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Usuario</Text>
           <Text style={styles.infoValue}>{user?.username ?? '—'}</Text>
@@ -77,14 +61,10 @@ export function ProfileScreen(): React.JSX.Element {
           <Text style={styles.infoLabel}>ID</Text>
           <Text style={styles.infoValue}>{user?.id ?? '—'}</Text>
         </View>
-
-        {/* TODO: Agrega más filas específicas de tu dominio */}
-        {/* Ejemplo:
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Membresía</Text>
-          <Text style={styles.infoValue}>Premium</Text>
+          <Text style={styles.infoLabel}>Rol</Text>
+          <Text style={styles.infoValue}>Oyente de la Radio Comunitaria</Text>
         </View>
-        */}
       </View>
 
       {/* Logout */}

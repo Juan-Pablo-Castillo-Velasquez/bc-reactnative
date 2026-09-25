@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "ejercicio-02-oauth-authsession",
+    "slug": "ejercicio-02-oauth-authsession",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "bcauth08",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "dev.bcreactnative.auth08.ej02"
+    },
+    "android": {
+      "package": "dev.bcreactnative.auth08.ej02"
+    }
+  }
+}
