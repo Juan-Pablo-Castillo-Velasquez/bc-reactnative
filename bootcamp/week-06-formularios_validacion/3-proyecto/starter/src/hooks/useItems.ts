@@ -1,65 +1,121 @@
 // src/hooks/useItems.ts
-// Custom hooks para CRUD de ítems usando TanStack Query + Axios
+// Custom hooks que encapsulan la lógica de fetching del dominio
+// Radio Comunitaria. Los componentes consumen estos hooks, no llaman
+// a apiClient directamente.
+//
+// NOTA: mientras el backend real de bc-expressjs (endpoint /programs con
+// host, schedule y sponsor) no está desplegado y accesible desde el
+// móvil, se usa JSONPlaceholder (/posts) como API de práctica, mapeando
+// su forma de datos (title, body) a nuestro modelo de dominio
+// (name, description).
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
 import { apiClient } from '../services/api';
 import type { CreateItemPayload, Item, UpdateItemPayload } from '../types';
 
-export const ITEMS_QUERY_KEY = ['items'] as const;
+// ============================================================
+// QUERY KEY
+// ============================================================
+// Centralizar la queryKey evita errores de typo al invalidar.
+export const PROGRAMS_QUERY_KEY = ['programs'] as const;
 
-// ─────────────────────────────────────────
-// READ — lista de ítems
-// ─────────────────────────────────────────
+// ============================================================
+// Forma cruda que retorna la API de práctica (JSONPlaceholder /posts)
+// ============================================================
+interface RawPost {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
+
+function mapPostToItem(post: RawPost): Item {
+  return {
+    id: post.id,
+    name: post.title,
+    description: post.body,
+  };
+}
+
+// ============================================================
+// useItems — obtener lista de programas
+// ============================================================
 
 export function useItems() {
   return useQuery<Item[]>({
-    queryKey: ITEMS_QUERY_KEY,
-    queryFn: () => apiClient.get<Item[]>('/posts?_limit=15').then(r => r.data),
-  });
-}
-
-// ─────────────────────────────────────────
-// READ — ítem individual (para formulario Edit)
-// ─────────────────────────────────────────
-
-export function useItemById(id: number | string) {
-  return useQuery<Item>({
-    queryKey: [...ITEMS_QUERY_KEY, id],
-    queryFn: () => apiClient.get<Item>(`/posts/${id}`).then(r => r.data),
-    enabled: !!id,
-  });
-}
-
-// ─────────────────────────────────────────
-// CREATE
-// ─────────────────────────────────────────
-
-export function useCreateItem() {
-  const queryClient = useQueryClient();
-  return useMutation<Item, Error, CreateItemPayload>({
-    mutationFn: (payload) =>
-      apiClient.post<Item>('/posts', payload).then(r => r.data),
-    onSuccess: () => {
-      // Invalidar la lista para que se refresque automáticamente
-      queryClient.invalidateQueries({ queryKey: ITEMS_QUERY_KEY });
+    queryKey: PROGRAMS_QUERY_KEY,
+    queryFn: async () => {
+      const { data } = await apiClient.get<RawPost[]>('/posts?_limit=15');
+      return data.map(mapPostToItem);
     },
   });
 }
 
-// ─────────────────────────────────────────
-// UPDATE — para el formulario Edit
-// ─────────────────────────────────────────
+// ============================================================
+// useItemById — obtener un programa individual (para EditScreen)
+// ============================================================
+
+export function useItemById(id: number | string) {
+  return useQuery<Item>({
+    queryKey: [...PROGRAMS_QUERY_KEY, id],
+    queryFn: async () => {
+      const { data } = await apiClient.get<RawPost>(`/posts/${id}`);
+      return mapPostToItem(data);
+    },
+    // La query solo corre si hay un id válido
+    enabled: !!id,
+  });
+}
+
+// ============================================================
+// useCreateItem — crear un nuevo programa
+// ============================================================
+
+export function useCreateItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation<Item, Error, CreateItemPayload>({
+    mutationFn: async (payload) => {
+      const { data } = await apiClient.post<RawPost>('/posts', {
+        title: payload.name,
+        body: payload.description,
+        userId: 1,
+      });
+      return mapPostToItem(data);
+    },
+    onSuccess: () => {
+      // Invalida el caché → TanStack Query hace refetch de la lista automáticamente
+      queryClient.invalidateQueries({ queryKey: PROGRAMS_QUERY_KEY });
+    },
+    onError: (error) => {
+      console.error('No se pudo crear el programa:', error.message);
+    },
+  });
+}
+
+// ============================================================
+// useUpdateItem — actualizar un programa existente (para EditScreen)
+// ============================================================
 
 export function useUpdateItem() {
   const queryClient = useQueryClient();
+
   return useMutation<Item, Error, UpdateItemPayload>({
-    mutationFn: (payload) =>
-      apiClient.put<Item>(`/posts/${payload.id}`, payload).then(r => r.data),
+    mutationFn: async (payload) => {
+      const { data } = await apiClient.put<RawPost>(`/posts/${payload.id}`, {
+        title: payload.name,
+        body: payload.description,
+        userId: 1,
+      });
+      return mapPostToItem(data);
+    },
     onSuccess: (_, variables) => {
-      // Invalidar lista e ítem individual
-      queryClient.invalidateQueries({ queryKey: ITEMS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: [...ITEMS_QUERY_KEY, variables.id] });
+      // Invalida la lista y el ítem individual
+      queryClient.invalidateQueries({ queryKey: PROGRAMS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: [...PROGRAMS_QUERY_KEY, variables.id] });
+    },
+    onError: (error) => {
+      console.error('No se pudo actualizar el programa:', error.message);
     },
   });
 }

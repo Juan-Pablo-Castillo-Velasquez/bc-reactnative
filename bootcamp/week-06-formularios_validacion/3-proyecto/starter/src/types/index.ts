@@ -1,23 +1,32 @@
 // src/types/index.ts
-// Tipos de datos del dominio — adapta los campos a tu dominio asignado
+// Modelo de dominio del proyecto: Radio Comunitaria.
+//
+// La API de práctica (JSONPlaceholder /posts) no expone campos de radio,
+// así que el hook useItems() mapea su forma (title, body) a este modelo
+// (name, description). Cuando el backend real de bc-expressjs (/programs)
+// esté disponible, este modelo puede extenderse con host, schedule,
+// sponsor y genre — los mismos campos ya usados en las semanas 03 y 04.
 
 export interface Item {
   id: number;
-  title: string;   // TODO: renombrar al concepto de tu dominio (ej. name, productName)
-  body: string;    // TODO: renombrar (ej. description, notes)
-  userId: number;
+  // Nombre del programa radial
+  name: string;
+  // Descripción del programa
+  description: string;
 }
 
-// Payload para crear un ítem nuevo (sin id — lo asigna el servidor)
-export interface CreateItemPayload {
-  title: string;
-  body: string;
-  userId: number;
-}
+// ============================================================
+// PAYLOAD DE CREACIÓN
+// ============================================================
+// Lo que se envía al crear un nuevo programa. El servidor asigna el id.
 
-// Payload para actualizar (id requerido + campos editables)
-export interface UpdateItemPayload {
+export type CreateItemPayload = Omit<Item, 'id'>;
+
+// ============================================================
+// PAYLOAD DE ACTUALIZACIÓN
+// ============================================================
+// Lo que se envía al editar un programa existente — requiere el id.
+
+export interface UpdateItemPayload extends CreateItemPayload {
   id: number;
-  title: string;
-  body: string;
 }

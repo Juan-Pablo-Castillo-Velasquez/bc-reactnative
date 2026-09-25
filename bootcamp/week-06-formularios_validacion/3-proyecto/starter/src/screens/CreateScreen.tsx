@@ -1,6 +1,5 @@
 // src/screens/CreateScreen.tsx
-// Formulario para crear un nuevo ítem.
-// TODO: conectar useForm + zodResolver + useCreateItem mutation.
+// Formulario para crear un nuevo programa (dominio Radio Comunitaria).
 
 import React from 'react';
 import {
@@ -20,13 +19,11 @@ import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../theme';
 import type { RootStackParamList } from '../navigation/types';
 import { FormField } from '../components/FormField';
 
-// TODO: importar useForm y zodResolver
-// import { useForm } from 'react-hook-form';
-// import { zodResolver } from '@hookform/resolvers/zod';
-// import { itemSchema, type ItemFormData } from '../schemas/itemSchema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { itemSchema, type ItemFormData } from '../schemas/itemSchema';
 
-// TODO: importar el hook de mutación
-// import { useCreateItem } from '../hooks/useItems';
+import { useCreateItem } from '../hooks/useItems';
 
 type CreateNavProp = NativeStackNavigationProp<RootStackParamList, 'Create'>;
 
@@ -37,37 +34,25 @@ type CreateNavProp = NativeStackNavigationProp<RootStackParamList, 'Create'>;
 export function CreateScreen(): React.JSX.Element {
   const navigation = useNavigation<CreateNavProp>();
 
-  // TODO: inicializar useForm con zodResolver
-  // ─────────────────────────────────────────────
-  // const {
-  //   control,
-  //   handleSubmit,
-  //   formState: { errors, isSubmitting },
-  // } = useForm<ItemFormData>({
-  //   resolver: zodResolver(itemSchema),
-  //   defaultValues: { title: '', body: '' },
-  // });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ItemFormData>({
+    resolver: zodResolver(itemSchema),
+    defaultValues: { name: '', description: '' },
+  });
 
-  // TODO: inicializar la mutation
-  // const { mutate: createItem } = useCreateItem();
+  const { mutate: createItem } = useCreateItem();
 
-  // Placeholder hasta que implementes el TODO
-  const isSubmitting = false;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const errors: any = {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const control: any = undefined;
-
-  // TODO: implementar la función onSubmit
-  // ─────────────────────────────────────────────
-  // function onSubmit(data: ItemFormData): void {
-  //   createItem(
-  //     { title: data.title, body: data.body ?? '', userId: 1 },
-  //     {
-  //       onSuccess: () => navigation.goBack(),
-  //     },
-  //   );
-  // }
+  function onSubmit(data: ItemFormData): void {
+    createItem(
+      { name: data.name, description: data.description ?? '' },
+      {
+        onSuccess: () => navigation.goBack(),
+      },
+    );
+  }
 
   const canSubmit = !isSubmitting;
 
@@ -82,51 +67,38 @@ export function CreateScreen(): React.JSX.Element {
         keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.hint}>
-          Adapta los campos de este formulario a tu dominio asignado.
+          Nuevo programa de la Radio Comunitaria.
         </Text>
-
-        {/* TODO: reemplaza los FormField con los campos de tu dominio */}
 
         <FormField
           control={control}
-          name="title"
+          name="name"
           label="Nombre *"
-          placeholder="Nombre del ítem…"
+          placeholder="Nombre del programa…"
           returnKeyType="next"
-          errorMessage={errors.title?.message}
+          errorMessage={errors.name?.message}
         />
 
         <FormField
           control={control}
-          name="body"
+          name="description"
           label="Descripción"
           placeholder="Descripción opcional…"
           multiline
           numberOfLines={4}
           textAlignVertical="top"
-          errorMessage={errors.body?.message}
+          errorMessage={errors.description?.message}
         />
-
-        {/* TODO: agrega campos adicionales de tu dominio aquí */}
-        {/* Ejemplo para Farmacia:
-        <FormField
-          control={control}
-          name="price"
-          label="Precio *"
-          placeholder="0.00"
-          keyboardType="numeric"
-          errorMessage={errors.price?.message}
-        /> */}
 
         <View style={styles.actions}>
           <Pressable
             style={[styles.button, !canSubmit && styles.buttonDisabled]}
-            // onPress={handleSubmit(onSubmit)}   ← descomentar al implementar
+            onPress={handleSubmit(onSubmit)}
             disabled={!canSubmit}
           >
             {isSubmitting
               ? <ActivityIndicator size="small" color={COLORS.background} />
-              : <Text style={styles.buttonText}>Crear ítem</Text>
+              : <Text style={styles.buttonText}>Crear programa</Text>
             }
           </Pressable>
 

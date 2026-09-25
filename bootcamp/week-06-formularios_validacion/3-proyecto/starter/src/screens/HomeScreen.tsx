@@ -1,6 +1,5 @@
 // src/screens/HomeScreen.tsx
-// Lista de ítems con pull-to-refresh y acceso a Create / Edit.
-// Esta pantalla ya está funcional — no requiere TODOs.
+// Lista de programas con pull-to-refresh y acceso a Create / Edit.
 
 import React from 'react';
 import {
@@ -56,17 +55,17 @@ export function HomeScreen(): React.JSX.Element {
       keyExtractor={(item) => String(item.id)}
       refreshing={isFetching && !isLoading}
       onRefresh={refetch}
-      ListEmptyComponent={<Text style={styles.empty}>No hay ítems aún</Text>}
+      ListEmptyComponent={<Text style={styles.empty}>No hay programas aún</Text>}
       ListHeaderComponent={
         data?.length
-          ? <Text style={styles.count}>{data.length} ítems</Text>
+          ? <Text style={styles.count}>{data.length} programas</Text>
           : null
       }
       renderItem={({ item }) => (
         <ItemRow
           item={item}
           onPress={() =>
-            navigation.navigate('Edit', { id: item.id, name: item.title })
+            navigation.navigate('Edit', { id: item.id, name: item.name })
           }
         />
       )}
@@ -85,11 +84,11 @@ function ItemRow({ item, onPress }: ItemRowProps): React.JSX.Element {
     <Pressable style={styles.row} onPress={onPress}>
       <View style={styles.rowLeft}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarLetter}>{item.title.charAt(0).toUpperCase()}</Text>
+          <Text style={styles.avatarLetter}>{item.name.charAt(0).toUpperCase()}</Text>
         </View>
         <View style={styles.rowText}>
-          <Text style={styles.rowTitle} numberOfLines={1}>{item.title}</Text>
-          <Text style={styles.rowSub} numberOfLines={1}>{item.body}</Text>
+          <Text style={styles.rowTitle} numberOfLines={1}>{item.name}</Text>
+          <Text style={styles.rowSub} numberOfLines={1}>{item.description}</Text>
         </View>
       </View>
       <Text style={styles.chevron}>›</Text>

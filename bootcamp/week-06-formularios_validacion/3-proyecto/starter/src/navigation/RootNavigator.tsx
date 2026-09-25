@@ -24,12 +24,12 @@ export function RootNavigator(): React.JSX.Element {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: 'Ítems', headerRight: () => <AddButton /> }}
+        options={{ title: 'Programas', headerRight: () => <AddButton /> }}
       />
       <Stack.Screen
         name="Create"
         component={CreateScreen}
-        options={{ title: 'Nuevo ítem', presentation: 'modal' }}
+        options={{ title: 'Nuevo programa', presentation: 'modal' }}
       />
       <Stack.Screen
         name="Edit"

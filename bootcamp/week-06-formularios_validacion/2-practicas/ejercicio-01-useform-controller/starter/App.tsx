@@ -18,8 +18,7 @@ import {
 // ============================================
 // PASO 1: importar useForm y Controller
 // ============================================
-// Descomenta las siguientes líneas:
-// import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 // ============================================
 // TIPO del formulario
@@ -34,24 +33,22 @@ export default function App(): React.JSX.Element {
   // ============================================
   // PASO 1: inicializar useForm con defaultValues
   // ============================================
-  // Descomenta las siguientes líneas:
-  // const {
-  //   control,
-  //   handleSubmit,
-  //   formState: { isSubmitting },
-  // } = useForm<ContactFormData>({
-  //   defaultValues: { name: '', email: '', message: '' },
-  // });
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<ContactFormData>({
+    defaultValues: { name: '', email: '', message: '' },
+  });
 
   // ============================================
   // PASO 3: función onSubmit
   // ============================================
-  // Descomenta las siguientes líneas:
-  // async function onSubmit(data: ContactFormData): Promise<void> {
-  //   // Simulamos una llamada de red de 1.5 s
-  //   await new Promise<void>(resolve => setTimeout(resolve, 1500));
-  //   console.log('✅ Formulario enviado:', data);
-  // }
+  async function onSubmit(data: ContactFormData): Promise<void> {
+    // Simulamos una llamada de red de 1.5 s
+    await new Promise<void>(resolve => setTimeout(resolve, 1500));
+    console.log('✅ Formulario enviado:', data);
+  }
 
   return (
     <KeyboardAvoidingView
@@ -70,10 +67,9 @@ export default function App(): React.JSX.Element {
         {/* ============================================
             PASO 2: campos con Controller
             ============================================ */}
-        {/* Descomenta los tres bloques Controller siguientes: */}
 
         {/* Campo: name */}
-        {/* <View style={styles.field}>
+        <View style={styles.field}>
           <Text style={styles.label}>Nombre</Text>
           <Controller
             control={control}
@@ -90,10 +86,10 @@ export default function App(): React.JSX.Element {
               />
             )}
           />
-        </View> */}
+        </View>
 
         {/* Campo: email */}
-        {/* <View style={styles.field}>
+        <View style={styles.field}>
           <Text style={styles.label}>Email</Text>
           <Controller
             control={control}
@@ -112,10 +108,10 @@ export default function App(): React.JSX.Element {
               />
             )}
           />
-        </View> */}
+        </View>
 
         {/* Campo: message */}
-        {/* <View style={styles.field}>
+        <View style={styles.field}>
           <Text style={styles.label}>Mensaje</Text>
           <Controller
             control={control}
@@ -134,20 +130,12 @@ export default function App(): React.JSX.Element {
               />
             )}
           />
-        </View> */}
-
-        {/* Placeholder mientras implementas los Controller */}
-        <View style={styles.placeholder}>
-          <Text style={styles.placeholderText}>
-            Implementa los campos con Controller (PASO 2)
-          </Text>
         </View>
 
         {/* ============================================
             PASO 4: botón con isSubmitting
             ============================================ */}
-        {/* Reemplaza el botón simple de abajo con el siguiente bloque (PASO 4): */}
-        {/* <Pressable
+        <Pressable
           style={({ pressed }) => [
             styles.button,
             isSubmitting && styles.buttonDisabled,
@@ -160,11 +148,6 @@ export default function App(): React.JSX.Element {
             ? <ActivityIndicator size="small" color="#111827" />
             : <Text style={styles.buttonText}>Enviar</Text>
           }
-        </Pressable> */}
-
-        {/* Botón simple — reemplazar en PASO 3 y 4 */}
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Enviar (sin conectar)</Text>
         </Pressable>
 
       </ScrollView>
