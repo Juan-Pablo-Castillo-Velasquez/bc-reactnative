@@ -15,6 +15,7 @@ import { AnimatedCard } from '../components/AnimatedCard';
 import { AnimatedButton } from '../components/AnimatedButton';
 import { ProgressBar } from '../components/ProgressBar';
 import { COLORS, SPACING } from '../theme';
+import { SAMPLE_PROGRAMS } from '../data/programs';
 import type { Item } from '../types';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -24,89 +25,91 @@ if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
 }
 
-// Sample data — replace with your domain's real data or useQuery call.
-const SAMPLE_ITEMS: Item[] = [
-  { id: '1', name: 'Item 1', description: 'Descripción del item 1', progress: 0.8 },
-  { id: '2', name: 'Item 2', description: 'Descripción del item 2', progress: 0.45 },
-  { id: '3', name: 'Item 3', description: 'Descripción del item 3', progress: 0.2 },
-  { id: '4', name: 'Item 4', description: 'Descripción del item 4', progress: 0.65 },
-];
-
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export function HomeScreen({ navigation }: Props): React.JSX.Element {
-  const [items, setItems] = useState<Item[]>(SAMPLE_ITEMS);
+  const [items, setItems] = useState<Item[]>(SAMPLE_PROGRAMS);
 
-  // TODO: Create one Animated.Value per item for stagger entrance.
-  // Use useRef to avoid re-creating on each render.
-  // const itemAnims = useRef(SAMPLE_ITEMS.map(() => new Animated.Value(0))).current;
-  //
-  // Note: if items come from a remote query, initialize anims when data arrives.
+  // Un Animated.Value por programa, para la entrada en cascada (stagger).
+  // Se pre-carga con los programas iniciales en valor 0; los que se agreguen
+  // después (handleAddItem) obtienen su valor directamente en 1, ya que
+  // LayoutAnimation se encarga de animar su aparición en el layout.
+  const itemAnimsRef = useRef<Map<string, Animated.Value>>(
+    new Map(SAMPLE_PROGRAMS.map(item => [item.id, new Animated.Value(0)])),
+  );
+
+  function getItemAnim(id: string): Animated.Value {
+    let anim = itemAnimsRef.current.get(id);
+    if (!anim) {
+      anim = new Animated.Value(1);
+      itemAnimsRef.current.set(id, anim);
+    }
+    return anim;
+  }
 
   useEffect(() => {
-    // TODO: Trigger Animated.stagger to animate each item in with 80ms delay.
-    // Stagger:
-    //   delay: 80
-    //   each anim: Animated.timing → { toValue: 1, duration: 400, useNativeDriver: true }
-    //
-    // Animated.stagger(
-    //   80,
-    //   itemAnims.map(anim =>
-    //     Animated.timing(anim, {
-    //       toValue: 1,
-    //       duration: 400,
-    //       useNativeDriver: true,
-    //     })
-    //   )
-    // ).start();
+    const anims = SAMPLE_PROGRAMS.map(item => getItemAnim(item.id));
+    Animated.stagger(
+      80,
+      anims.map(anim =>
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ),
+    ).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRemoveItem = (id: string) => {
-    // TODO: Call LayoutAnimation.configureNext BEFORE setState.
-    // This will animate the layout change when the item is removed.
-    //
-    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setItems(prev => prev.filter(item => item.id !== id));
   };
 
   const handleAddItem = () => {
     const newItem: Item = {
       id: Date.now().toString(),
-      name: `Item ${items.length + 1}`,
-      description: 'Nuevo item añadido dinámicamente',
+      name: `Programa ${items.length + 1}`,
+      description: 'Nuevo programa añadido a la parrilla de la radio',
       progress: Math.random(),
     };
-    // TODO: Call LayoutAnimation.configureNext BEFORE setState.
-    //
-    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setItems(prev => [...prev, newItem]);
   };
 
-  const renderItem = ({ item, index }: { item: Item; index: number }) => {
-    // TODO: Wrap the inner content in an Animated.View using itemAnims[index].
-    // Animated style:
-    //   opacity: itemAnims[index]
-    //   transform: [{ translateY: itemAnims[index].interpolate({ inputRange:[0,1], outputRange:[20,0] }) }]
+  const renderItem = ({ item }: { item: Item }) => {
+    const anim = getItemAnim(item.id);
+    const animatedStyle = {
+      opacity: anim,
+      transform: [
+        {
+          translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }),
+        },
+      ],
+    };
 
     return (
-      <AnimatedCard
-        onPress={() => navigation.navigate('Detail', { itemId: item.id })}
-        style={styles.card}
-      >
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemDescription}>{item.description}</Text>
-        {item.progress !== undefined && (
-          <ProgressBar
-            progress={item.progress}
-            label="Progreso"
+      <Animated.View style={animatedStyle}>
+        <AnimatedCard
+          onPress={() => navigation.navigate('Detail', { itemId: item.id })}
+          style={styles.card}
+        >
+          <Text style={styles.itemName}>{item.name}</Text>
+          <Text style={styles.itemDescription}>{item.description}</Text>
+          {item.progress !== undefined && (
+            <ProgressBar
+              progress={item.progress}
+              label="Avance de temporada"
+            />
+          )}
+          <AnimatedButton
+            label="Eliminar"
+            variant="success"
+            onPress={() => handleRemoveItem(item.id)}
           />
-        )}
-        <AnimatedButton
-          label="Eliminar"
-          variant="success"
-          onPress={() => handleRemoveItem(item.id)}
-        />
-      </AnimatedCard>
+        </AnimatedCard>
+      </Animated.View>
     );
   };
 
@@ -120,16 +123,13 @@ export function HomeScreen({ navigation }: Props): React.JSX.Element {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.title}>
-              {/* TODO: Replace with your domain name */}
-              Mi Dominio
-            </Text>
-            <Text style={styles.subtitle}>{items.length} items</Text>
+            <Text style={styles.title}>Programas</Text>
+            <Text style={styles.subtitle}>{items.length} programas al aire</Text>
           </View>
         }
         ListFooterComponent={
           <View style={styles.footer}>
-            <AnimatedButton label="+ Añadir item" onPress={handleAddItem} />
+            <AnimatedButton label="+ Añadir programa" onPress={handleAddItem} />
           </View>
         }
       />
