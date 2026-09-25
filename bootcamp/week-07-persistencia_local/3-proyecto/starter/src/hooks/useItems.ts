@@ -1,6 +1,5 @@
 // src/hooks/useItems.ts
 // TanStack Query hooks con caché AsyncStorage para soporte offline.
-// TODO: implementar el fallback de AsyncStorage en useItems().
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,25 +17,19 @@ export function useItems() {
   return useQuery<ItemsWithSource>({
     queryKey: ITEMS_QUERY_KEY,
     queryFn: async (): Promise<ItemsWithSource> => {
-      // TODO: implementar caché AsyncStorage
-      // ─────────────────────────────────────
-      // try {
-      //   const data = await fetchItems();
-      //   // Guardar en caché cuando hay red exitosa
-      //   await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
-      //   return { items: data, source: 'network' };
-      // } catch {
-      //   // Sin red: intentar caché
-      //   const cached = await AsyncStorage.getItem(CACHE_KEY);
-      //   if (cached) {
-      //     return { items: JSON.parse(cached) as Item[], source: 'cache' };
-      //   }
-      //   throw new Error('Sin red y sin caché disponible');
-      // }
-
-      // Placeholder hasta implementar el TODO:
-      const data = await fetchItems();
-      return { items: data, source: 'network' };
+      try {
+        const data = await fetchItems();
+        // Guardar en caché cuando hay red exitosa
+        await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        return { items: data, source: 'network' };
+      } catch {
+        // Sin red: intentar caché
+        const cached = await AsyncStorage.getItem(CACHE_KEY);
+        if (cached) {
+          return { items: JSON.parse(cached) as Item[], source: 'cache' };
+        }
+        throw new Error('Sin red y sin caché disponible');
+      }
     },
     staleTime: 1000 * 60 * 5,
   });

@@ -12,17 +12,19 @@ import {
   Text,
   View,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ─── PASO 1-2: MMKV imports ────────────────────────────────────────────
-// Descomenta al implementar PASO 1:
-// import { MMKV } from 'react-native-mmkv';
-// export const storage = new MMKV({ id: 'ejercicio-02' });
+// NOTA: react-native-mmkv 4.x (Nitro) ya no expone `MMKV` como clase
+// instanciable con `new` — es solo un tipo. La instancia se crea con
+// la función factory `createMMKV()`.
+import { createMMKV } from 'react-native-mmkv';
+export const storage = createMMKV({ id: 'ejercicio-02' });
 
-// Descomenta al implementar PASO 2:
-// import { useMMKVString, useMMKVBoolean } from 'react-native-mmkv';
+import { useMMKVString, useMMKVBoolean } from 'react-native-mmkv';
 
 // ─── PASO 3: SecureStore import ────────────────────────────────────────
-// import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store';
 
 // ─── Storage Keys (centralizar para evitar typos) ─────────────────────
 const KEYS = {
@@ -46,58 +48,53 @@ export default function App(): React.JSX.Element {
   // ─────────────────────────────────────────────
   // PASO 1: Instancia MMKV y operaciones básicas
   // ─────────────────────────────────────────────
-  // useEffect(() => {
-  //   // Sin await — sincrónico
-  //   storage.set(KEYS.THEME, 'dark');
-  //   storage.set(KEYS.PAGE_SIZE, 10);
-  //   storage.set(KEYS.DARK_MODE, true);
-  //
-  //   const theme    = storage.getString(KEYS.THEME);
-  //   const pageSize = storage.getNumber(KEYS.PAGE_SIZE);
-  //   const darkMode = storage.getBoolean(KEYS.DARK_MODE);
-  //
-  //   addLog(`MMKV leído — theme: ${theme}, pageSize: ${pageSize}, darkMode: ${darkMode}`);
-  // }, []);
+  useEffect(() => {
+    // Sin await — sincrónico
+    storage.set(KEYS.THEME, 'dark');
+    storage.set(KEYS.PAGE_SIZE, 10);
+    storage.set(KEYS.DARK_MODE, true);
+
+    const theme    = storage.getString(KEYS.THEME);
+    const pageSize = storage.getNumber(KEYS.PAGE_SIZE);
+    const darkModeValue = storage.getBoolean(KEYS.DARK_MODE);
+
+    addLog(`MMKV leído — theme: ${theme}, pageSize: ${pageSize}, darkMode: ${darkModeValue}`);
+  }, []);
 
   // ─────────────────────────────────────────────
   // PASO 2: Hooks reactivos useMMKVBoolean / useMMKVString
   // ─────────────────────────────────────────────
-  // Descomenta estas dos líneas (dentro del componente, fuera del useEffect):
-  // const [darkMode, setDarkMode] = useMMKVBoolean(KEYS.DARK_MODE, storage);
-  // const [theme, setTheme]       = useMMKVString(KEYS.THEME, storage);
-
-  // Mientras no implementas el PASO 2, usamos estado local:
-  const [darkMode, setDarkMode] = useState(false);
-  const [theme, setTheme] = useState<string | undefined>('dark');
+  const [darkMode, setDarkMode] = useMMKVBoolean(KEYS.DARK_MODE, storage);
+  const [theme, setTheme]       = useMMKVString(KEYS.THEME, storage);
 
   // ─────────────────────────────────────────────
   // PASO 3: SecureStore — guardar y leer token
   // ─────────────────────────────────────────────
   const [tokenStatus, setTokenStatus] = useState('Sin token guardado');
 
-  // async function handleSaveToken(): Promise<void> {
-  //   const mockToken = `mock.jwt.${Date.now()}`;
-  //   await SecureStore.setItemAsync(KEYS.TOKEN, mockToken);
-  //   setTokenStatus('Token guardado (cifrado)');
-  //   addLog(`Token guardado con SecureStore: ${mockToken.slice(0, 20)}...`);
-  // }
+  async function handleSaveToken(): Promise<void> {
+    const mockToken = `mock.jwt.${Date.now()}`;
+    await SecureStore.setItemAsync(KEYS.TOKEN, mockToken);
+    setTokenStatus('Token guardado (cifrado)');
+    addLog(`Token guardado con SecureStore: ${mockToken.slice(0, 20)}...`);
+  }
 
-  // async function handleReadToken(): Promise<void> {
-  //   const token = await SecureStore.getItemAsync(KEYS.TOKEN);
-  //   if (token) {
-  //     setTokenStatus(`Token recuperado: ${token.slice(0, 20)}...`);
-  //     addLog('Token leído desde Keychain/Keystore');
-  //   } else {
-  //     setTokenStatus('Sin token guardado');
-  //     addLog('No hay token en SecureStore');
-  //   }
-  // }
+  async function handleReadToken(): Promise<void> {
+    const token = await SecureStore.getItemAsync(KEYS.TOKEN);
+    if (token) {
+      setTokenStatus(`Token recuperado: ${token.slice(0, 20)}...`);
+      addLog('Token leído desde Keychain/Keystore');
+    } else {
+      setTokenStatus('Sin token guardado');
+      addLog('No hay token en SecureStore');
+    }
+  }
 
-  // async function handleDeleteToken(): Promise<void> {
-  //   await SecureStore.deleteItemAsync(KEYS.TOKEN);
-  //   setTokenStatus('Token eliminado');
-  //   addLog('Token eliminado de SecureStore');
-  // }
+  async function handleDeleteToken(): Promise<void> {
+    await SecureStore.deleteItemAsync(KEYS.TOKEN);
+    setTokenStatus('Token eliminado');
+    addLog('Token eliminado de SecureStore');
+  }
 
   // ─────────────────────────────────────────────
   // PASO 4: Benchmark MMKV vs AsyncStorage
@@ -105,32 +102,32 @@ export default function App(): React.JSX.Element {
   const [benchResult, setBenchResult] = useState<string | null>(null);
   const [isBenchRunning, setIsBenchRunning] = useState(false);
 
-  // async function runBenchmark(): Promise<void> {
-  //   setIsBenchRunning(true);
-  //   const ITERATIONS = 100;
-  //
-  //   // MMKV — sincrónico
-  //   const mmkvStart = Date.now();
-  //   for (let i = 0; i < ITERATIONS; i++) {
-  //     storage.set(`bench_key_${i}`, `value_${i}`);
-  //     storage.getString(`bench_key_${i}`);
-  //   }
-  //   const mmkvTime = Date.now() - mmkvStart;
-  //
-  //   // AsyncStorage — asíncrono
-  //   const asyncStart = Date.now();
-  //   await Promise.all(
-  //     Array.from({ length: ITERATIONS }, (_, i) =>
-  //       AsyncStorage.setItem(`bench_key_${i}`, `value_${i}`)
-  //         .then(() => AsyncStorage.getItem(`bench_key_${i}`)),
-  //     ),
-  //   );
-  //   const asyncTime = Date.now() - asyncStart;
-  //
-  //   setBenchResult(`MMKV: ${mmkvTime}ms   |   AsyncStorage: ${asyncTime}ms   (${ITERATIONS} ops)`);
-  //   setIsBenchRunning(false);
-  //   addLog(`Benchmark: MMKV ${mmkvTime}ms vs AsyncStorage ${asyncTime}ms`);
-  // }
+  async function runBenchmark(): Promise<void> {
+    setIsBenchRunning(true);
+    const ITERATIONS = 100;
+
+    // MMKV — sincrónico
+    const mmkvStart = Date.now();
+    for (let i = 0; i < ITERATIONS; i++) {
+      storage.set(`bench_key_${i}`, `value_${i}`);
+      storage.getString(`bench_key_${i}`);
+    }
+    const mmkvTime = Date.now() - mmkvStart;
+
+    // AsyncStorage — asíncrono
+    const asyncStart = Date.now();
+    await Promise.all(
+      Array.from({ length: ITERATIONS }, (_, i) =>
+        AsyncStorage.setItem(`bench_key_${i}`, `value_${i}`)
+          .then(() => AsyncStorage.getItem(`bench_key_${i}`)),
+      ),
+    );
+    const asyncTime = Date.now() - asyncStart;
+
+    setBenchResult(`MMKV: ${mmkvTime}ms   |   AsyncStorage: ${asyncTime}ms   (${ITERATIONS} ops)`);
+    setIsBenchRunning(false);
+    addLog(`Benchmark: MMKV ${mmkvTime}ms vs AsyncStorage ${asyncTime}ms`);
+  }
 
   const bg = darkMode ? '#0f172a' : '#f8fafc';
   const fg = darkMode ? '#f8fafc' : '#0f172a';
@@ -159,7 +156,6 @@ export default function App(): React.JSX.Element {
               value={darkMode ?? false}
               onValueChange={(v) => {
                 setDarkMode(v);
-                // Al implementar PASO 2, setDarkMode persiste en MMKV automáticamente
                 addLog(`darkMode cambiado a: ${v}`);
               }}
             />
@@ -175,16 +171,13 @@ export default function App(): React.JSX.Element {
           <Text style={[styles.status, { color: fg }]}>{tokenStatus}</Text>
 
           <View style={styles.rowBtns}>
-            {/* Descomenta al implementar: onPress={handleSaveToken} */}
-            <Pressable style={[styles.btn, styles.btnDisabled]} disabled>
+            <Pressable style={styles.btn} onPress={handleSaveToken}>
               <Text style={styles.btnText}>Guardar token</Text>
             </Pressable>
-            {/* Descomenta al implementar: onPress={handleReadToken} */}
-            <Pressable style={[styles.btn, styles.btnSecondary, styles.btnDisabled]} disabled>
+            <Pressable style={[styles.btn, styles.btnSecondary]} onPress={handleReadToken}>
               <Text style={styles.btnText}>Leer token</Text>
             </Pressable>
-            {/* Descomenta al implementar: onPress={handleDeleteToken} */}
-            <Pressable style={[styles.btn, styles.btnDanger, styles.btnDisabled]} disabled>
+            <Pressable style={[styles.btn, styles.btnDanger]} onPress={handleDeleteToken}>
               <Text style={styles.btnText}>Borrar</Text>
             </Pressable>
           </View>
@@ -196,9 +189,9 @@ export default function App(): React.JSX.Element {
           {benchResult && (
             <Text style={[styles.bench, { color: fg }]}>{benchResult}</Text>
           )}
-          {/* Descomenta al implementar: onPress={runBenchmark} */}
           <Pressable
-            style={[styles.btn, styles.btnDisabled]}
+            style={styles.btn}
+            onPress={runBenchmark}
             disabled={isBenchRunning}
           >
             {isBenchRunning
