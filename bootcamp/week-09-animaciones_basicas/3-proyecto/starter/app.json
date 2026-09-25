@@ -20,9 +20,6 @@
         "backgroundColor": "#0f172a"
       },
       "package": "dev.ergrato.week09"
-    },
-    "plugins": [
-      "expo-router"
-    ]
+    }
   }
 }

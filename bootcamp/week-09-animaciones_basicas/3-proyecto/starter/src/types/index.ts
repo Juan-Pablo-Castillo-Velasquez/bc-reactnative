@@ -1,17 +1,12 @@
-// Domain types — adapt to your assigned domain.
+// Domain types — Radio Comunitaria.
 
-// Base item for the domain list.
-// Add specific fields for your domain.
-// Examples:
-//   Biblioteca: author: string; isbn: string; isAvailable: boolean;
-//   Farmacia: price: number; stock: number; category: string;
-//   Gimnasio: membershipType: string; daysActive: number;
+// Item base para la lista del dominio: un programa de la radio.
 export interface Item {
   id: string;
   name: string;
   description: string;
-  // TODO: Add domain-specific fields here
-  progress?: number; // 0-1, used for ProgressBar
+  // progress: avance de la temporada actual del programa (0-1), usado por ProgressBar
+  progress?: number;
 }
 
 // Response shape from the API

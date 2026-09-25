@@ -23,12 +23,12 @@ export function RootNavigator(): React.JSX.Element {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Mi Dominio' }} // TODO: Actualiza el título con tu dominio
+          options={{ title: 'Radio Comunitaria' }}
         />
         <Stack.Screen
           name="Detail"
           component={DetailScreen}
-          options={{ title: 'Detalle' }}
+          options={{ title: 'Programa' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

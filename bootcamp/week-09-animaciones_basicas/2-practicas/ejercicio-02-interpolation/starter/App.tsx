@@ -19,31 +19,26 @@ function SpinnerSection(): React.JSX.Element {
   const spinAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Descomenta las siguientes líneas:
-    // Animated.loop(
-    //   Animated.timing(spinAnim, {
-    //     toValue: 1,
-    //     duration: 1000,
-    //     useNativeDriver: true,
-    //   })
-    // ).start();
+    Animated.loop(
+      Animated.timing(spinAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ).start();
   }, [spinAnim]);
 
-  // Descomenta las siguientes líneas:
-  // const rotate = spinAnim.interpolate({
-  //   inputRange: [0, 1],
-  //   outputRange: ['0deg', '360deg'],
-  // });
+  const rotate = spinAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Paso 1 — Spinner (loop + rotate)</Text>
-      {/* Descomenta y usa rotate en el Animated.View: */}
-      {/* <Animated.View style={{ transform: [{ rotate }] }}> */}
-      <View>
+      <Animated.View style={{ transform: [{ rotate }] }}>
         <Text style={styles.spinner}>⚙️</Text>
-      </View>
-      {/* </Animated.View> */}
+      </Animated.View>
     </View>
   );
 }
@@ -60,46 +55,40 @@ function ProgressBarSection(): React.JSX.Element {
   const startProgress = () => {
     progressAnim.setValue(0); // reinicia la barra
 
-    // Descomenta las siguientes líneas (PASO 2):
-    // Animated.timing(progressAnim, {
-    //   toValue: 1,
-    //   duration: 2000,
-    //   useNativeDriver: false, // ← width y backgroundColor no son nativas
-    // }).start();
+    Animated.timing(progressAnim, {
+      toValue: 1,
+      duration: 2000,
+      useNativeDriver: false, // ← width y backgroundColor no son nativas
+    }).start();
   };
 
   // PASO 2 — interpolate de ancho
-  // Descomenta las siguientes líneas:
-  // const widthInterp = progressAnim.interpolate({
-  //   inputRange: [0, 1],
-  //   outputRange: ['0%', '100%'],
-  //   extrapolate: 'clamp',
-  // });
+  const widthInterp = progressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
+    extrapolate: 'clamp',
+  });
 
   // PASO 3 — interpolate de color (inputRange con 3 puntos)
-  // Descomenta las siguientes líneas:
-  // const colorInterp = progressAnim.interpolate({
-  //   inputRange: [0, 0.5, 1],
-  //   outputRange: ['#ef4444', '#facc15', '#22c55e'],
-  //   extrapolate: 'clamp',
-  // });
+  const colorInterp = progressAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['#ef4444', '#facc15', '#22c55e'],
+    extrapolate: 'clamp',
+  });
 
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Pasos 2+3 — Barra de progreso</Text>
       <View style={styles.progressTrack}>
-        {/* Paso 2: Reemplaza el View por Animated.View y usa widthInterp */}
-        {/* Paso 3: Agrega colorInterp al backgroundColor */}
-        {/* <Animated.View
+        <Animated.View
           style={[
             styles.progressBar,
             {
-              width: widthInterp,          // PASO 2
-              backgroundColor: colorInterp, // PASO 3
+              width: widthInterp,
+              backgroundColor: colorInterp,
             },
           ]}
-        /> */}
-        <View style={[styles.progressBar, { width: '0%' }]} />
+        />
       </View>
       <Pressable style={styles.button} onPress={startProgress}>
         <Text style={styles.buttonText}>▶ Iniciar progreso</Text>
@@ -120,40 +109,37 @@ function StaggerListSection(): React.JSX.Element {
   const itemAnims = useRef(LIST_ITEMS.map(() => new Animated.Value(0))).current;
 
   useEffect(() => {
-    // Descomenta las siguientes líneas:
-    // Animated.stagger(
-    //   80,
-    //   itemAnims.map(anim =>
-    //     Animated.timing(anim, {
-    //       toValue: 1,
-    //       duration: 400,
-    //       useNativeDriver: true,
-    //     })
-    //   )
-    // ).start();
+    Animated.stagger(
+      80,
+      itemAnims.map(anim =>
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ),
+    ).start();
   }, [itemAnims]);
 
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Paso 4 — Stagger (cascada)</Text>
       {LIST_ITEMS.map((label, index) => {
-        // Descomenta el animated style y cambia View por Animated.View:
-        // const animatedStyle = {
-        //   opacity: itemAnims[index],
-        //   transform: [
-        //     {
-        //       translateX: itemAnims[index].interpolate({
-        //         inputRange: [0, 1],
-        //         outputRange: [-20, 0],
-        //       }),
-        //     },
-        //   ],
-        // };
+        const animatedStyle = {
+          opacity: itemAnims[index],
+          transform: [
+            {
+              translateX: itemAnims[index].interpolate({
+                inputRange: [0, 1],
+                outputRange: [-20, 0],
+              }),
+            },
+          ],
+        };
         return (
-          // Reemplaza View con Animated.View y añade style={animatedStyle}:
-          <View key={label} style={styles.listItem}>
+          <Animated.View key={label} style={[styles.listItem, animatedStyle]}>
             <Text style={styles.listItemText}>{label}</Text>
-          </View>
+          </Animated.View>
         );
       })}
     </View>

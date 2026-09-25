@@ -18,24 +18,18 @@ function FadeInCard(): React.JSX.Element {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Descomenta las siguientes líneas:
-    // Animated.timing(fadeAnim, {
-    //   toValue: 1,
-    //   duration: 800,
-    //   useNativeDriver: true,
-    // }).start();
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
   }, [fadeAnim]);
 
   return (
-    // Descomenta las siguientes líneas y elimina el View:
-    // <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
-    //   <Text style={styles.cardTitle}>👋 Hola, Animated.timing</Text>
-    //   <Text style={styles.cardSubtitle}>Este fade in usa useNativeDriver: true</Text>
-    // </Animated.View>
-    <View style={styles.card}>
+    <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
       <Text style={styles.cardTitle}>👋 Hola, Animated.timing</Text>
-      <Text style={styles.cardSubtitle}>Descomenta el Paso 1</Text>
-    </View>
+      <Text style={styles.cardSubtitle}>Este fade in usa useNativeDriver: true</Text>
+    </Animated.View>
   );
 }
 
@@ -49,39 +43,31 @@ function SpringButton(): React.JSX.Element {
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
-    // Descomenta las siguientes líneas:
-    // Animated.spring(scaleAnim, {
-    //   toValue: 0.92,
-    //   useNativeDriver: true,
-    // }).start();
+    Animated.spring(scaleAnim, {
+      toValue: 0.92,
+      useNativeDriver: true,
+    }).start();
   };
 
   const handlePressOut = () => {
-    // Descomenta las siguientes líneas:
-    // Animated.spring(scaleAnim, {
-    //   toValue: 1,
-    //   tension: 300,
-    //   friction: 10,
-    //   useNativeDriver: true,
-    // }).start();
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      tension: 300,
+      friction: 10,
+      useNativeDriver: true,
+    }).start();
   };
 
   return (
-    // Descomenta el Animated.View y elimina el View:
-    // <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-    //   <Pressable
-    //     style={styles.button}
-    //     onPressIn={handlePressIn}
-    //     onPressOut={handlePressOut}
-    //   >
-    //     <Text style={styles.buttonText}>💬 Presióname (spring)</Text>
-    //   </Pressable>
-    // </Animated.View>
-    <View>
-      <Pressable style={styles.button} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-        <Text style={styles.buttonText}>💬 Presióname (spring) — Paso 2</Text>
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <Pressable
+        style={styles.button}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+        <Text style={styles.buttonText}>💬 Presióname (spring)</Text>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -96,40 +82,34 @@ function SlideUpFadeCard(): React.JSX.Element {
   const translateYAnim = useRef(new Animated.Value(30)).current;
 
   useEffect(() => {
-    // Descomenta las siguientes líneas:
-    // Animated.parallel([
-    //   Animated.timing(opacityAnim, {
-    //     toValue: 1,
-    //     duration: 600,
-    //     useNativeDriver: true,
-    //   }),
-    //   Animated.timing(translateYAnim, {
-    //     toValue: 0,
-    //     duration: 600,
-    //     useNativeDriver: true,
-    //   }),
-    // ]).start();
+    Animated.parallel([
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateYAnim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, [opacityAnim, translateYAnim]);
 
   return (
-    // Descomenta el Animated.View y elimina el View:
-    // <Animated.View
-    //   style={[
-    //     styles.card,
-    //     styles.cardBlue,
-    //     {
-    //       opacity: opacityAnim,
-    //       transform: [{ translateY: translateYAnim }],
-    //     },
-    //   ]}
-    // >
-    //   <Text style={styles.cardTitle}>⚡ Parallel: fade + slide up</Text>
-    //   <Text style={styles.cardSubtitle}>opacity + translateY al mismo tiempo</Text>
-    // </Animated.View>
-    <View style={[styles.card, styles.cardBlue]}>
-      <Text style={styles.cardTitle}>⚡ Parallel — Paso 3</Text>
-      <Text style={styles.cardSubtitle}>Descomenta el Paso 3</Text>
-    </View>
+    <Animated.View
+      style={[
+        styles.card,
+        styles.cardBlue,
+        {
+          opacity: opacityAnim,
+          transform: [{ translateY: translateYAnim }],
+        },
+      ]}
+    >
+      <Text style={styles.cardTitle}>⚡ Parallel: fade + slide up</Text>
+      <Text style={styles.cardSubtitle}>opacity + translateY al mismo tiempo</Text>
+    </Animated.View>
   );
 }
 
@@ -143,33 +123,26 @@ function BounceButton(): React.JSX.Element {
   const bounceAnim = useRef(new Animated.Value(0)).current;
 
   const startBounce = () => {
-    // Descomenta las siguientes líneas:
-    // Animated.sequence([
-    //   Animated.timing(bounceAnim, {
-    //     toValue: -20,
-    //     duration: 200,
-    //     useNativeDriver: true,
-    //   }),
-    //   Animated.timing(bounceAnim, {
-    //     toValue: 0,
-    //     duration: 200,
-    //     useNativeDriver: true,
-    //   }),
-    // ]).start();
+    Animated.sequence([
+      Animated.timing(bounceAnim, {
+        toValue: -20,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(bounceAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   return (
-    // Descomenta el Animated.View y elimina el View:
-    // <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
-    //   <Pressable style={[styles.button, styles.buttonGreen]} onPress={startBounce}>
-    //     <Text style={styles.buttonText}>🔔 Bounce (sequence)</Text>
-    //   </Pressable>
-    // </Animated.View>
-    <View>
+    <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
       <Pressable style={[styles.button, styles.buttonGreen]} onPress={startBounce}>
-        <Text style={styles.buttonText}>🔔 Bounce (sequence) — Paso 4</Text>
+        <Text style={styles.buttonText}>🔔 Bounce (sequence)</Text>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 

@@ -10,6 +10,7 @@ import {
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ProgressBar } from '../components/ProgressBar';
 import { COLORS, SPACING } from '../theme';
+import { SAMPLE_PROGRAMS } from '../data/programs';
 import type { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
@@ -17,47 +18,45 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
 export function DetailScreen({ route }: Props): React.JSX.Element {
   const { itemId } = route.params;
 
-  // TODO: Create Animated.Values for the entrance animation.
-  // Two values needed:
-  //   opacityAnim = useRef(new Animated.Value(0)).current
-  //   translateYAnim = useRef(new Animated.Value(30)).current
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const translateYAnim = useRef(new Animated.Value(30)).current;
 
   useEffect(() => {
-    // TODO: Use Animated.parallel to run fade in + slide up simultaneously.
-    //
-    // Animated.parallel([
-    //   Animated.timing(opacityAnim, {
-    //     toValue: 1,
-    //     duration: 500,
-    //     useNativeDriver: true,
-    //   }),
-    //   Animated.timing(translateYAnim, {
-    //     toValue: 0,
-    //     duration: 500,
-    //     useNativeDriver: true,
-    //   }),
-    // ]).start();
-  }, []);
+    Animated.parallel([
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateYAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [opacityAnim, translateYAnim]);
 
-  // Simulated item data — replace with useQuery in a real implementation.
-  const item = {
+  // Se busca el programa real en los datos compartidos con HomeScreen para
+  // mantener el mismo nombre/descripción. Un programa agregado dinámicamente
+  // en Home (no persistido) cae al placeholder genérico.
+  const found = SAMPLE_PROGRAMS.find(program => program.id === itemId);
+  const item = found ?? {
     id: itemId,
-    name: `Item ${itemId}`,
+    name: `Programa ${itemId}`,
     description:
-      'Esta es la descripción detallada del item. Adapta esta pantalla a tu dominio mostrando la información relevante de cada elemento.',
+      'Esta es la descripción detallada del programa. Adapta esta pantalla a tu dominio mostrando la información relevante de cada elemento.',
     progress: 0.72,
-    // TODO: Add domain-specific fields
+  };
+
+  const animatedStyle = {
+    opacity: opacityAnim,
+    transform: [{ translateY: translateYAnim }],
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* TODO: Wrap this View in an Animated.View and apply the entrance animation.
-            animated style:
-              opacity: opacityAnim,
-              transform: [{ translateY: translateYAnim }]
-        */}
-        <View>
+        <Animated.View style={animatedStyle}>
           <View style={styles.card}>
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.description}>{item.description}</Text>
@@ -65,7 +64,7 @@ export function DetailScreen({ route }: Props): React.JSX.Element {
 
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>Progreso</Text>
-            <ProgressBar progress={item.progress} label="Completado" />
+            <ProgressBar progress={item.progress ?? 0} label="Avance de temporada" />
           </View>
 
           <View style={styles.card}>
@@ -74,9 +73,8 @@ export function DetailScreen({ route }: Props): React.JSX.Element {
               <Text style={styles.detailLabel}>ID: </Text>
               <Text style={styles.detailValue}>{item.id}</Text>
             </Text>
-            {/* TODO: Add domain-specific detail rows */}
           </View>
-        </View>
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -96,6 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: SPACING.lg,
     gap: SPACING.sm,
+    marginBottom: SPACING.md,
   },
   name: {
     color: COLORS.text,
